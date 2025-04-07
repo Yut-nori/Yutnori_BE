@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+// NUM_OF_YUTS 으로 윷 개수 지정. 윷이 4개 이상이라면 이 클래스에서 유지.보수 가능
+// 윷을 던져 나오는 도, 개, 걸, 윷, 모, 빽도에 대한 값을 yutResult로 반환
 public class YutResult {
     private static final int NUM_OF_YUTS = 4; // 윷 개수 (변경 가능)
     private static List<Yut> yutList = new ArrayList<>();
@@ -13,11 +15,10 @@ public class YutResult {
         yutList.clear();
         Random rand = new Random();
 
-        int backDoIndex = rand.nextInt(NUM_OF_YUTS); // 빽도 전용 윷 하나 지정
+        int backDoIndex = rand.nextInt(NUM_OF_YUTS); // 빽도 윷 하나 지정
         int flatCount = 0;
-        boolean isBackDoCondition = false;
 
-        // 윷 생성 및 던지기
+        // 윷 개수 만큼 생성하고 하나의 값은 빽도 윷으로 지정
         for (int i = 0; i < NUM_OF_YUTS; i++) {
             boolean isBackDo = (i == backDoIndex);
             Yut yut = new Yut(isBackDo);
@@ -25,32 +26,22 @@ public class YutResult {
             yutList.add(yut);
         }
 
-        // 빽도 조건: 빽도 윷은 평평, 나머지는 둥글어야 함
-        Yut backDoYut = yutList.get(backDoIndex);
-        if (backDoYut.isFlat()) {
-            isBackDoCondition = true;
-            for (int i = 0; i < NUM_OF_YUTS; i++) {
-                if (i != backDoIndex && yutList.get(i).isFlat()) {
-                    isBackDoCondition = false;
-                    break;
-                }
-            }
+        // flat 개수 세기
+        for (Yut y : yutList) {
+            if (y.isFlat()) flatCount++;
         }
 
-        if (isBackDoCondition) {
+        // 결과값 반환
+        if (flatCount == 1 && yutList.get(backDoIndex).isFlat()) {
             yutResult = -1; // 빽도
         } else {
-            for (Yut y : yutList) {
-                if (y.isFlat()) flatCount++;
-            }
-
-            // flat 개수 → 실제 윷놀이 결과로 변환
             switch (flatCount) {
-                case 1: yutResult = 1; break; // 도
-                case 2: yutResult = 2; break; // 개
-                case 3: yutResult = 3; break; // 걸
-                case 4: yutResult = 5; break; // 모
-                default: yutResult = 0;       // 예외 처리 (모든 윷이 둥근 경우)
+                case 1 -> yutResult = 1; // 도
+                case 2 -> yutResult = 2; // 개
+                case 3 -> yutResult = 3; // 걸
+                case 4 -> yutResult = 4; // 윷
+                case 0 -> yutResult = 5; // 모 (5개일 때)
+                default -> yutResult = 0; // 예외
             }
         }
     }
@@ -59,7 +50,11 @@ public class YutResult {
         return yutResult;
     }
 
-    // (선택) 각 윷 상태 출력 (디버깅용)
+    // 테스트 용 : 윷이 어떻게 나왔는지를 결과로 출력
+    // Yut 1: Round
+    // Yut 2: Flat (BackDo Yut)
+    // Yut 3: Round
+    // Yut 4: Round
     public static void printYuts() {
         for (int i = 0; i < yutList.size(); i++) {
             Yut yut = yutList.get(i);
@@ -69,16 +64,15 @@ public class YutResult {
         }
     }
 
-    // (선택) 숫자 결과 → 문자열 결과로 반환
     public static String getResultName() {
         return switch (yutResult) {
-            case -1 -> "BackDo";
-            case 1 -> "Do";
-            case 2 -> "Gae";
-            case 3 -> "Geol";
-            case 4 -> "Yut";
-            case 5 -> "Mo";
-            default -> "Invalid";
+            case -1 -> "빽도";
+            case 1 -> "도";
+            case 2 -> "개";
+            case 3 -> "걸";
+            case 4 -> "윷";
+            case 5 -> "모";
+            default -> "Invalid error";
         };
     }
 }
