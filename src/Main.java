@@ -32,8 +32,8 @@ public class Main {
 
         System.out.print("");
 
-        Starter.init(numPlayer, playerNameList, playerUnit, boardEdgeNum); // 게임 데이터 설정
-        Starter.start(); // 설정된 값으로 게임 시작
+        Starter starter = new Starter(numPlayer,playerNameList,playerUnit,boardEdgeNum);
+        starter.start(); // 설정된 값으로 게임 시작
 
     }
 }
