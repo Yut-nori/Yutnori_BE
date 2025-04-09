@@ -7,7 +7,7 @@ public class Unit {
     private Status status;
     private boolean isGrouped;
 
-    private enum Status {
+    public enum Status {
         READY, ON, END
     }
 
@@ -40,6 +40,4 @@ public class Unit {
     public void setGrouped(boolean isGrouped) {
         this.isGrouped = isGrouped;
     }
-
-
 }

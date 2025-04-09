@@ -2,7 +2,9 @@ package model;
 
 import controller.YutManager;
 import model.Yut.Yut;
+import model.Unit;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
@@ -10,10 +12,14 @@ public class Player {
     private int unitNum;
     private boolean isWinner;
 
+    private List<Unit> units;
+    private YutManager yutManager;
+
     public Player(String playerName, int unitNum, boolean isWinner) {
         this.playerName = playerName;
         this.unitNum = unitNum;
         this.isWinner = isWinner;
+        this.units = new ArrayList<Unit>();
     }
 
     // 윷 던지기 (YutManager를 사용)
@@ -31,11 +37,19 @@ public class Player {
         return playerName;
     }
 
-    public int getUnitNum() {
-        return unitNum;
-    }
-
     public boolean isWinner() {
         return isWinner;
+    }
+
+    public void addUnit(Unit unit) {
+        this.units.add(unit);
+    }
+
+    public List<Unit> getUnits() {
+        return units;
+    }
+
+    public int getUnitNum() {
+        return unitNum;
     }
 }
