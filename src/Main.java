@@ -28,6 +28,8 @@ public class Main {
             System.out.println("현재 위치 : " + currentPos.getIndex() + " | isVertex : " + currentPos.isVertex());
         }*/
         Starter starter = new Starter(2,  new String[] {"test1", "test2"}, 2,4);
-        starter.start(); // Example usage to avoid "never read" warning
+        starter.start(true, new int[]{5, 3, -1}); // Example usage to avoid "never read" warning
+
+
     }
 }

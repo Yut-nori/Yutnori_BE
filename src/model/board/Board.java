@@ -104,13 +104,28 @@ public class Board {
 
                 innerLastPos.setNext(centerPos);
 
+                /*
+                   말이 이동했던 경로에 따라 History 를 가져와서 해당 경로 1개로만 Back 하도록 설정?
+                 */
+
+                /* History 방식 */
+
+
                 // TODO : centerPos의 back Pos를 정하는 방법?
             }
         }
-
     }
 
     public Position[] getPositionArr() {
         return positionArr;
+    }
+
+    // 해당 보드의 Center Position return
+    public Position getCenterPos() {
+        return positionArr[positionNum - 1];
+    }
+
+    public int getNumberOfPositions() {
+        return positionNum;
     }
 }
