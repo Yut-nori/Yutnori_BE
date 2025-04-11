@@ -1,13 +1,8 @@
-import model.Player;
-import model.board.Board;
-import model.board.Position;
-
-import java.util.ArrayList;
-import java.util.List;
+import controller.Starter;
 
 public class Main {
     public static void main(String[] args) {
-        Board b = new Board(4);
+       /*  Board b = new Board(4);
         Player p = new Player("test", 1, false);
 
         Position[] positions = b.getPositionArr();
@@ -16,7 +11,7 @@ public class Main {
 
         List<Integer> result = new ArrayList<>();
 
-        /* test용 윷 결과 */
+        //test용 윷 결과
         int[] yutRes = {4, 4, 2, 3};
         for(int res : yutRes) {
             result.add(res);
@@ -31,7 +26,8 @@ public class Main {
             }
 
             System.out.println("현재 위치 : " + currentPos.getIndex() + " | isVertex : " + currentPos.isVertex());
-        }
-
+        }*/
+        Starter starter = new Starter(2,  new String[] {"test1", "test2"}, 2,4);
+        starter.start(); // Example usage to avoid "never read" warning
     }
 }
