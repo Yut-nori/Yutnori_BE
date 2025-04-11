@@ -79,31 +79,21 @@ public class PlayManager {
 
         while (!throwResult.isEmpty()) {
             printThrowResult(throwResult);
-    
-            if (isOnlyReady(current) && throwResult.size() == 1) {
-                handleAutoMoveReady(current, playerGroups, throwResult);
-            } else if (isOnlyOnBoard(current)) {
-                handleAutoMoveOnBoard(playerGroups, throwResult);
-            } else {
-                selectedGroup = handleUserMove(playerGroups, throwResult);
-            }
-    
+            selectedGroup = handleUserMove(playerGroups, throwResult);
             handlePostMoveActions(current, playerGroups, throwResult, selectedGroup);
-                
             if (isAllUnitsEnded(current)) {
                 current.setWinner(true);
                 System.out.println(current.getPlayerName() + "이(가) 승리했습니다!");
                 return;
             }
         }
-
     
         System.out.println("\n\n");
         setNextPlayer();
     }
 
 
-    //윷 결과 출력
+    //윷 결과 출력 --> CLI 테스트용
     private void printThrowResult(List<Integer> throwResult) {
         System.out.print("윷 결과: ");
         for (Integer result : throwResult) {
@@ -112,61 +102,7 @@ public class PlayManager {
         System.out.println();
     }
 
-    //자동이동 조건 1. 아무 말이 board에 없는 경우
-    private boolean isOnlyReady(Player player) {
-        int ready = 0, onBoard = 0;
-        for (Unit unit : player.getUnits()) {
-            if (unit.getStatus() == Unit.Status.READY) ready++;
-            if (unit.getStatus() == Unit.Status.ON) onBoard++;
-        }
-        return ready >= 1 && onBoard == 0;
-    }
-
-    //자동이동 조건 2. 말이 딱 하나 남은 경우
-    private boolean isOnlyOnBoard(Player player) {
-        int onBoard = 0;
-        int onReady = 0;
-        for (Unit unit : player.getUnits()) {
-            if (unit.getStatus() == Unit.Status.ON) onBoard++;
-            if (unit.getStatus() == Unit.Status.READY) onReady++;
-        }
-        return (onReady ==0 && onBoard == 1);
-    }
-
-    //자동이동1. 조건1 에따른 이동 
-    private void handleAutoMoveReady(Player current, List<GroupUnit> playerGroups, List<Integer> throwResult) {
-        System.out.println("READY 상태의 유닛만 있습니다. 자동 이동을 실행합니다.");
-        Unit unit = current.getUnits().stream()
-                .filter(u -> u.getStatus() == Unit.Status.READY)
-                .findFirst()
-                .orElse(null);
-    
-        if (unit != null) {
-            System.out.println("board 에 올라간다.");
-            GroupUnit group = playerGroups.get(0);
-    
-            // 빽도 처리
-            if (throwResult.get(0) == -1) {
-                throwResult.remove(0);
-                throwResult.add(1);
-            }
-    
-            unitManager.moveGroup(group, throwResult.get(0));
-            System.out.println("유닛 0이 " + group.getPositionIdx() + "으로 이동");
-            throwResult.remove(0);
-        }
-    }
-
-    //자동이동2. 조건2 에따른 이동
-    private void handleAutoMoveOnBoard(List<GroupUnit> playerGroups, List<Integer> throwResult) {
-        System.out.println("보드에 유닛이 하나만 있습니다. 자동 이동을 실행합니다.");
-        GroupUnit group = playerGroups.get(0); // 첫 번째 그룹 선택
-        unitManager.moveGroup(group, throwResult.get(0));
-        System.out.println("유닛 0이 " + group.getPositionIdx() + "으로 이동");
-        throwResult.remove(0);
-    }
-
-    //플레이어 선택 이동
+    //플레이어 선택 이동 --> CLI tesets
     private int handleUserMove(List<GroupUnit> playerGroups, List<Integer> throwResult) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("이동할 수 있는 유닛과 칸을 선택하세요.");
