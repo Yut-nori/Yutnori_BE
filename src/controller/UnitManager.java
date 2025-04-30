@@ -5,9 +5,7 @@ import java.util.List;
 import model.GroupUnit;
 import model.Player;
 import model.Unit;
-import model.board.Board;
 import model.board.Position;
-
 
 //-> Board 가 가져야할 역할까지 가지고 있음 -> 통합해서 분리 필요.ㄴ
 public class UnitManager {
@@ -35,6 +33,7 @@ public class UnitManager {
 
         Position groupCurrentPos = group.getCurrentPosition();
 
+        /* 빽도 */
         if(moveDistance == -1) {
             groupCurrentPos = groupCurrentPos.getBack();
             System.out.println("******** 빽도 " + groupCurrentPos.getIndex());
@@ -42,13 +41,19 @@ public class UnitManager {
             /* 현 위치가 꼭짓점 */
             if(groupCurrentPos.isVertex()) {
                 groupCurrentPos = groupCurrentPos.getAltNext();
+                //push
+                group.pushHistory(groupCurrentPos);
                 for(int i=0;i<moveDistance-1;i++) {
                     groupCurrentPos = groupCurrentPos.getNext();
+                    //push
+                    group.pushHistory(groupCurrentPos);
                 }
                 /* 현 위치가 일반 Position */
             } else {
                 for(int i=0;i<moveDistance;i++) {
                     groupCurrentPos = groupCurrentPos.getNext();
+                    //push
+                    group.pushHistory(groupCurrentPos);
                 }
             }
         }
