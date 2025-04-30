@@ -23,11 +23,10 @@ public class PlayManager {
         this.numPlayer = numPlayer;
         this.currentPlayer = 0;
         this.playerList = new ArrayList<>();
-        this.boardManager = new BoardManager(boardEdgeNum);
         this.unitManager = new UnitManager();
         this.playerUnitNum = playerUnitNum;
 
-        BoardManager.createBoard();
+        BoardManager.createBoard(boardEdgeNum);
 
         gameBoard = BoardManager.getBoard();
         createPlayer(playerNameList, playerUnitNum);
@@ -138,7 +137,7 @@ public class PlayManager {
         GroupUnit selectedGroup = playerGroups.get(selectUnit);
         int moveDistance = throwResult.get(selectPosition);
 
-        Position resultPosition = unitManager.moveGroup(selectedGroup, moveDistance);
+        unitManager.moveGroup(selectedGroup, moveDistance);
 
         System.out.println("유닛 " + selectUnit + "이 " + selectedGroup.getCurrentPosition().getIndex() + "으로 이동");
         throwResult.remove(selectPosition);

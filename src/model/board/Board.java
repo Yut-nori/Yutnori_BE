@@ -111,6 +111,7 @@ public class Board {
                 /* History 방식 */
 
 
+
                 // TODO : centerPos의 back Pos를 정하는 방법?
             }
         }
