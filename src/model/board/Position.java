@@ -13,6 +13,7 @@ public class Position {
         this.index = index;
         next = back = altNext = altBack = null;
         isVertex = false;
+        isCenter = false;
     }
 
     public boolean isVertex() {
@@ -73,31 +74,11 @@ public class Position {
 
     public void setCenter(boolean isCenter) {
         this.isCenter = isCenter;
+        this.setVertex(true);
     }
 
     public boolean isCenter() {
         return isCenter;
     }
-
-    /* 테스트용 move 메서드 */
-    /*
-    public Position testMove(int distance) {
-        Position result = this;
-
-        // 현재 Position이 altNext 보유
-        if(this.isVertex) {
-            result = result.getAltNext();
-            for(int i=0;i<distance-1;i++) {
-                result = result.getNext();
-            }
-        } else {
-            for(int i=0;i<distance;i++) {
-                result = result.getNext();
-            }
-        }
-
-        return result;
-    }
-    */
 }
 

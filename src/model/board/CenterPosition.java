@@ -13,6 +13,8 @@ public class CenterPosition extends Position {
         this.nextPositions = new Position[nextPosNum];
         this.backPositions = new Position[nextPosNum];
         this.setCenter(true); // isCenter 설정
+        this.setVertex(true);
+
     }
 
     public void setSingleNext(int index, Position nextPos) {
@@ -45,7 +47,7 @@ public class CenterPosition extends Position {
      * 짝수/홀수 edgeNum에 따라 center에서 갈 수 있는 next Position을 자동 계산해주는 유틸리티
      * 이 메서드는 Board.createPositions()에서 호출해야 함
      */
-    public void assignAutoForwardPaths(Position[] positionArr, int[] vertexIndices, int outerPositionNum, int innerPositionNum) {
+    public void assignAutoForwardPaths(Position[] positionArr, Integer[] vertexIndices, int outerPositionNum, int innerPositionNum) {
         for (int i = 1; i < vertexIndices.length; i++) { // i == 0은 제외 (출발점)
             int fromVertexIdx = vertexIndices[i];
             int forwardOffset;
@@ -61,5 +63,13 @@ public class CenterPosition extends Position {
 
             setSingleNext(i - 1, forwardVertex);
         }
+    }
+
+    public Position[] getNextPositions() {
+        return nextPositions;
+    }
+
+    public Position[] getBackPositions() {
+        return backPositions;
     }
 }

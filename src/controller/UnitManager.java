@@ -5,17 +5,17 @@ import java.util.List;
 import model.GroupUnit;
 import model.Player;
 import model.Unit;
+import model.board.Board;
+import model.board.Path;
 import model.board.Position;
 
-//-> Board 가 가져야할 역할까지 가지고 있음 -> 통합해서 분리 필요.ㄴ
 public class UnitManager {
-    private List<GroupUnit> groupList; // 그룹 목록
+    private List<GroupUnit> groupList;
 
     public UnitManager() {
         this.groupList = new ArrayList<>();
     }
 
-    // 새로운 그룹 생성 및 추가
     public GroupUnit createGroup(Player player, Unit unit) {
         List<Unit> units = new ArrayList<>();
         units.add(unit);
@@ -24,35 +24,98 @@ public class UnitManager {
         return group;
     }
 
-    // 그룹 이동
     public void moveGroup(GroupUnit group, int distance) {
         if (group == null) return;
 
-        // 빽도 처리: 이전 위치로 되돌아가기
-        if (distance == -1) {
-            group.setPosition(group.popHistory()); // 스택에서 꺼낸 위치로 이동
-            return;
-        }
+        Board board = BoardManager.getBoard();
+        Position groupPosition = group.getCurrentPosition();
 
-        // 일반 이동 처리
-        Position currPos = group.getCurrentPosition();
-        for (int i = 0; i < distance; i++) {
-            if (currPos == null) break;
+        //빽도 아님
+        if (distance > 0) {
+            if (!groupPosition.isVertex() && (groupPosition.getIndex() == 0 || groupPosition.getIndex() < board.getLastOuterPosNum())) {
+                // 일반 바깥쪽 경로 -> 그냥 next
+                groupPosition = moveNormal(group, distance);
 
-            // 현재 위치 저장
-            group.pushHistory(currPos);
+            } else if (groupPosition.isCenter()) {
+                // center에서 altNext를 따라 시작점으로
+                moveCenterToStart(group);
 
-            // 다음 위치로 이동
-            currPos = getNextPosition(currPos, 1); // 이동은 한 칸씩
-        }
+            } else if (groupPosition.isVertex()) {  // 꼭짓점인 경우 (시작점 제외)
+                if (group.hasPath()) {              // 만약 기존 Path가 있다면 Path의 종점에 도착한것임
+                    group.releasePath();            // 해당 Path는 필요 X
+                    groupPosition = moveNormal(group, distance);        //그대로 next 이동
+                } else {
+                    // 기존 Path 없음 -> 새로 Path를 찾아서 해당 Path대로 이동
+                    for (Path p : board.getPaths()) {               //Path 찾고
+                        if (p.getStartPos().getIndex() == groupPosition.getIndex()) {
+                            group.setPath(p);
+                        }
+                    }
 
-        // 최종 위치 설정
-        if (currPos != null) {
-            group.setPosition(currPos);
+                    //Path대로 이동
+                    Position start = group.getCurrentPath().getStartPos();
+                    Position moved = moveAndRecordHistory(group, start, distance);
+                    groupPosition = board.getPosition(moved.getIndex());
+                }
+
+            } else {                            // inner position일때 (center도, 바깥도, vertex도 아님)
+                if (group.hasPath()) {
+                    Path path = group.getCurrentPath();
+                    Position p = path.getPosition(groupPosition.getIndex());
+                    int remain = distance - path.getRemainLength(groupPosition.getIndex());     //Path 종점까지 남은 거리
+
+                    if (remain < 0) {       //Path 종점(끝 vertex)을 지나가지 않음 (바깥으로 나가지 않는 경우)
+                        Position moved = moveAndRecordHistory(group, p, distance);
+                        groupPosition = board.getPosition(moved.getIndex());
+                    } else {                // Path 종점을 지나가는 경우 -> 종점까지 Path를 타고 남은 거리만큼 그냥 next로 바깥쪽을 돈다
+                        Position end = path.getEndPos();
+                        while (p != end) {
+                            p = p.getNext();
+                            group.pushHistory(p);
+                        }
+                        groupPosition = board.getPosition(p.getIndex());
+                        group.setPosition(groupPosition);
+                        group.releasePath();
+
+                        groupPosition = moveNormal(group, remain);
+                    }
+                }
+            }
+
+            group.setPosition(groupPosition);       //마지막으로 group 위치 설정
+        } else {
+            // 뒤로 한 칸 (빽도)
+            group.popHistory();
+            Position backPos = board.getPosition(group.peekHistory());
+            group.setPosition(backPos);
         }
     }
 
-    // 특정 플레이어의 모든 그룹 반환
+    // 단순한 이동 (next 타고)
+    private Position moveNormal(GroupUnit group, int distance) {
+        return moveAndRecordHistory(group, group.getCurrentPosition(), distance);
+    }
+
+    // 이동하면서 history에 push (나중에 빽도용)
+    private Position moveAndRecordHistory(GroupUnit group, Position start, int distance) {
+        Position current = start;
+        for (int i = 0; i < distance; i++) {
+            current = current.getNext();
+            group.pushHistory(current);
+        }
+        return current;
+    }
+
+    // Center position에서 시작점으로 들어감
+    private void moveCenterToStart(GroupUnit group) {
+        Position p = group.getCurrentPosition();
+        while (p.getIndex() != 0) {
+            p = p.getAltNext();
+            group.pushHistory(p);
+        }
+        group.setPosition(p);
+    }
+
     public List<GroupUnit> getGroupsByPlayer(Player player) {
         List<GroupUnit> result = new ArrayList<>();
         for (GroupUnit group : groupList) {
@@ -63,15 +126,14 @@ public class UnitManager {
         return result;
     }
 
-    // 이동한 자리에 우리 유닛이 있는지 확인, 병합
     public boolean isFriendlytInPosition(Player current, Position position) {
         GroupUnit currentGroup = null;
         int findEqual = 0;
         for (GroupUnit group : getGroupsByPlayer(current)) {
-            if(group.getCurrentPosition().equals(position)){
+            if (group.getCurrentPosition().equals(position)) {
                 findEqual++;
             }
-            if(findEqual >= 2) {
+            if (findEqual >= 2) {
                 currentGroup = group;
                 mergeGroups(currentGroup, position);
                 return true;
@@ -80,28 +142,23 @@ public class UnitManager {
         return false;
     }
 
-    // 이동한 자리에 상대 유닛이 있는지 확인, 병합
     public boolean isEnemytInPosition(Player current, Position position) {
-        System.out.println("현재 플레이어 : "+current.getPlayerName() + ", 현재 위치 : " + position.getIndex());
-        GroupUnit currentGroup = null;
         for (GroupUnit group : groupList) {
-            if (group.getCurrentPosition().equals(position) && !group.getPlayer().getPlayerName().equals(current.getPlayerName())) {
-                System.out.println("상대 플레이어 : " +group.getPlayer().getPlayerName());
+            if (group.getCurrentPosition().equals(position)
+                    && !group.getPlayer().getPlayerName().equals(current.getPlayerName())) {
+
                 for (Unit unit : group.getUnitGroup()) {
                     unit.setStatus(Unit.Status.READY);
                     unit.setPosition(BoardManager.getBoard().getPositionArr()[0]);
                     createGroup(group.getPlayer(), unit);
                 }
                 groupList.remove(group);
-
                 return true;
             }
         }
-        System.out.println("not enemy player");
         return false;
     }
 
-    // 그룹 병합
     private void mergeGroups(GroupUnit targetGroup, Position position) {
         for (GroupUnit group : groupList) {
             if (group.getCurrentPosition().equals(position) && group != targetGroup) {
@@ -112,24 +169,10 @@ public class UnitManager {
         }
     }
 
-    // 유닛 도착
     public void unitPassed(GroupUnit group) {
         for (Unit unit : group.getUnitGroup()) {
             unit.setStatus(Unit.Status.END);
         }
         groupList.remove(group);
     }
-
-    // 현재 위치에서 distance만큼 이동한 위치 반환
-    public Position getNextPosition(Position current, int distance) {
-        Position pos = current;
-        for (int i = 0; i < distance; i++) {
-            if (pos == null) break;
-
-            // 멈춘 경우를 altNext, 통과는 next로 처리 가능
-            pos = pos.getNext();
-        }
-        return pos;
-    }
-
 }

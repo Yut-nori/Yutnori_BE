@@ -101,6 +101,9 @@ public class PlayManager {
             }
         }
 
+        GroupUnit g = playerGroups.get(0);
+        g.printHistoryStack();
+
         System.out.println("\n\n");
         setNextPlayer();
     }
@@ -141,6 +144,9 @@ public class PlayManager {
 
         System.out.println("유닛 " + selectUnit + "이 " + selectedGroup.getCurrentPosition().getIndex() + "으로 이동");
         throwResult.remove(selectPosition);
+
+        System.out.println("========== Stack ==========");
+        selectedGroup.printHistoryStack();
 
         return selectUnit;
 
