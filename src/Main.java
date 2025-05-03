@@ -5,6 +5,7 @@ import model.board.Position;
 public class Main {
     public static void main(String[] args) {
         // 기존 게임 시작 코드 (유지)
+        testBoardStructure(4); // 사각형
         Starter starter = new Starter(2,  new String[] {"test1", "test2"}, 2, 4);
         starter.start(true, new int[]{5, -1, -1, -1, -1});
 
