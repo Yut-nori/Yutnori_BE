@@ -59,9 +59,16 @@ public class Board {
         }
 
         /* 중심점 Position 생성 및 연결 */
+        /*
         Position centerPos = new Position(positionNum - 1);
         centerPos.setVertex(true);
         centerPos.setCenter();
+        positionArr[positionNum - 1] = centerPos;
+
+         */
+
+        CenterPosition centerPos = new CenterPosition(edgeNum, positionNum - 1);
+        centerPos.setVertex(true);
         positionArr[positionNum - 1] = centerPos;
 
         /* 각 바깥쪽 꼭짓점과 이어진 내부 Position 생성 및 연결 */
@@ -73,55 +80,64 @@ public class Board {
                 positionArr[innerStartPosNum + j] = innerPos;
             }
 
+            Position innerStartPos = positionArr[innerStartPosNum];
             Position innerLastPos = positionArr[innerStartPosNum + (innerPositionNum - 1)];
+            Position eachVertexPos = positionArr[i];
 
+            // Center랑 바깥쪽 꼭짓점 제외하고 그 사이 안쪽의 Position들만 next-back으로 연결
             int tmp = innerStartPosNum;
             while(!positionArr[tmp].equals(innerLastPos)) {
-                positionArr[tmp].setNext(positionArr[tmp + 1]);
-                positionArr[tmp + 1].setBack(positionArr[tmp]);
+                if(i == 0) {
+                    positionArr[tmp].setAltNext(positionArr[tmp + 1]);
+                    positionArr[tmp + 1].setAltBack(positionArr[tmp]);
+                } else {
+                    positionArr[tmp].setNext(positionArr[tmp + 1]);
+                    positionArr[tmp + 1].setBack(positionArr[tmp]);
+                }
                 tmp++;
             }
             /*
-            positionNum / 2 > i => 들어오는 길과 나가는 길 모두 있음
+            outerPositionNum / 2 > i => 들어오는 길과 나가는 길 모두 있음
             그 중에서 0, 마지막 => 들어오는 길만 있음
             * */
+            //첫 pos
+            if(i == 0) {
+                centerPos.setAltNext(innerStartPos);
+                innerStartPos.setAltBack(centerPos);
+            }
+            //마지막 꼭짓점
+            if(i == (positionNum - (outerPositionNum + 1))) {
 
-            if(i > (positionNum / 2) || i == 0) {
+            }
+            //나머지 center에서 vertex로 나가는 방향
+
+            // 들어오는 방향 setSingleBack
+
+
+            /*
+            // 여기서 i는 각 꼭짓점
+            if(i > ((outerPositionNum + 1) / 2) || i == 0) {
                 if(i == 0 || i == (positionNum - (outerPositionNum + 1))) {
                     //0, 마지막 꼭짓점
                     //들어오는 길만
+                    if(i == 0) {
+                        // 시작 위치로는 중심점에서(centerPos) altNext로 연결 (지름길)
+                        centerPos.setAltNext(innerStartPos);
+                        innerStartPos.setAltBack(centerPos);
+                    }
+                    innerLastPos.setNext(eachVertexPos);
+                    eachVertexPos.setBack(innerLastPos);
                 } else {
                     //들어오고 나가고
                 }
             } else {
                 //나가는 길만
-            }
-
-
-
-            /*
-            if(i == 0 || i == (lastOuterPosNum - outerPositionNum)) {
-                innerLastPos.setNext(positionArr[i]);
-                positionArr[i].setAltBack(innerLastPos);
-
-                if(i == 0) {
-                    centerPos.setAltNext(positionArr[innerStartPosNum]);
-                    positionArr[innerStartPosNum].setBack(centerPos);
-                } else {
-                    centerPos.setNext(positionArr[innerStartPosNum]);
-                    positionArr[innerStartPosNum].setBack(centerPos);
-                }
-            */
-            /* 나머지 꼭짓점은 중심점으로 들어가는 방향으로 index 증가시켜 연결 */
-            /*
-            } else {
-                positionArr[i].setAltNext(positionArr[innerStartPosNum]);
-                positionArr[innerStartPosNum].setBack(positionArr[i]);
-
+                // 각 꼭짓점(eachVertexPos) 와 안쪽 첫번째 Position (innerStartPos) 간 alternative next-back 으로 연결
+                eachVertexPos.setAltNext(innerStartPos);
+                innerStartPos.setAltBack(eachVertexPos);
+                // 중심점(centerPos) 와 안쪽 중심점에 가장 가까운 Position(innerLastPos) 와 연결 (단, next만 연결, back은 X => 동적으로)
                 innerLastPos.setNext(centerPos);
-
             }
-
              */
         }
     }

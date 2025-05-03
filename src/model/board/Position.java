@@ -7,13 +7,11 @@ public class Position {
     private Position altNext;
     private Position altBack;
     private int index;
-    private boolean isCenter; // center인가?
 
     public Position(int index) {
         this.index = index;
         next = back = altNext = altBack = null;
         isVertex = false;
-        isCenter = false;
     }
 
     public boolean isVertex() {
@@ -88,12 +86,5 @@ public class Position {
         return result;
     }
     */
-
-    public void setCenter() {
-        isCenter = true;
-    }
-    public boolean isCenter() {
-        return isCenter;
-    }
 }
 
