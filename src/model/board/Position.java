@@ -7,6 +7,7 @@ public class Position {
     private Position altNext;
     private Position altBack;
     private int index;
+    private boolean isCenter;   // 나중에 Center 인지 확인해줄 것임.
 
     public Position(int index) {
         this.index = index;
@@ -61,9 +62,21 @@ public class Position {
         return index;
     }
 
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
     public int getNextIndex() {
         if(isVertex) return altNext.getIndex();
         else return index + 1;
+    }
+
+    public void setCenter(boolean isCenter) {
+        this.isCenter = isCenter;
+    }
+
+    public boolean isCenter() {
+        return isCenter;
     }
 
     /* 테스트용 move 메서드 */

@@ -13,7 +13,9 @@ public class Board {
 
     private Position[] positionArr;
 
-    /* n각형 보드 기본 */
+
+    /* n각형 보드 기본 -> 나중에 vertex와 vertex 사이끼리의 길이를 조정할 수 있고,
+    vertex와 center 사이의 거리를 조정할 수도 있음.  */
     public Board(int edgeNum) {
         this(edgeNum, 4, 2);
     }
@@ -36,119 +38,83 @@ public class Board {
         int lastOuterPosNum = edgeNum * (outerPositionNum + 1) - 1;      // 바깥쪽 Position들 중 가장 마지막 Position
 
         /* 바깥쪽 테두리 Position 생성 및 연결*/
-        for(int i=0;i<=lastOuterPosNum;i++) {
+        for (int i = 0; i <= lastOuterPosNum; i++) {
             Position pos = new Position(i);
             positionArr[i] = pos;
 
             /* 첫 Position 생성 */
-            if(i == 0) {
+            if (i == 0) {
                 start = end = pos;
-            /* 나머지 점들은 일반적인 방법으로 이중연결리스트 연결 */
+                /* 나머지 점들은 일반적인 방법으로 이중연결리스트 연결 */
             } else {
                 pos.setBack(end);
                 end.setNext(pos);
                 end = pos;
-                if(i == lastOuterPosNum) {
+                if (i == lastOuterPosNum) {
                     end.setNext(start);
                     start.setBack(end);
                 }
             }
 
             /* 바깥쪽 n-2 개의 altNextPos를 가질 수 있는 Vertex 지정 */
-            if((i % (outerPositionNum + 1) == 0) && (i < (outerPositionNum + 1) * (edgeNum - 1)) && i != 0) pos.setVertex(true);
+            if ((i % (outerPositionNum + 1) == 0) && (i < (outerPositionNum + 1) * (edgeNum - 1)) && i != 0)
+                pos.setVertex(true);
         }
 
-        /* 중심점 Position 생성 및 연결 */
-        /*
-        Position centerPos = new Position(positionNum - 1);
-        centerPos.setVertex(true);
-        centerPos.setCenter();
-        positionArr[positionNum - 1] = centerPos;
-
-         */
-
+// Center 생성 및 등록
         CenterPosition centerPos = new CenterPosition(edgeNum, positionNum - 1);
         centerPos.setVertex(true);
+        centerPos.setCenter(true); // Position의 isCenter 플래그
         positionArr[positionNum - 1] = centerPos;
 
-        /* 각 바깥쪽 꼭짓점과 이어진 내부 Position 생성 및 연결 */
-        for(int i=0;i<lastOuterPosNum;i+=(outerPositionNum + 1)) {
-            int innerStartPosNum = edgeNum * (outerPositionNum + 1) + (i / (outerPositionNum + 1)) * innerPositionNum;
+// === 내부 경로 생성 및 연결 ===
+// 내부 인덱스 시작: 바깥쪽 인덱스 다음 번호
+        int innerBaseIndex = edgeNum * (outerPositionNum + 1);
 
-            for(int j=0;j<innerPositionNum;j++) {
-                Position innerPos = new Position(innerStartPosNum + j);
-                positionArr[innerStartPosNum + j] = innerPos;
-            }
+// 꼭짓점 순서: 5, 10, 15, ..., 마지막 0 (시계 방향으로)
+        List<Integer> vertexOrder = new ArrayList<>();
+        for (int i = 1; i < edgeNum; i++) {
+            vertexOrder.add(i * (outerPositionNum + 1));
+        }
+        vertexOrder.add(0); // 마지막 꼭짓점 0번 인덱스
 
-            Position innerStartPos = positionArr[innerStartPosNum];
-            Position innerLastPos = positionArr[innerStartPosNum + (innerPositionNum - 1)];
-            Position eachVertexPos = positionArr[i];
+        int innerCount = 0;
+        for (int i = 0; i < vertexOrder.size(); i++) {
+            int vertexIdx = vertexOrder.get(i);
+            Position vertex = positionArr[vertexIdx];
 
-            // Center랑 바깥쪽 꼭짓점 제외하고 그 사이 안쪽의 Position들만 next-back으로 연결
-            int tmp = innerStartPosNum;
-            while(!positionArr[tmp].equals(innerLastPos)) {
-                if(i == 0) {
-                    positionArr[tmp].setAltNext(positionArr[tmp + 1]);
-                    positionArr[tmp + 1].setAltBack(positionArr[tmp]);
+            Position prev = null;
+            Position firstInner = null;
+
+            for (int j = 0; j < innerPositionNum; j++) {
+                int innerIdx = innerBaseIndex + innerCount;
+                Position inner = new Position(innerIdx);
+                positionArr[innerIdx] = inner;
+
+                if (j == 0) {
+                    // vertex → inner 진입: altNext / altBack
+                    vertex.setAltNext(inner);
+                    inner.setAltBack(vertex);
+                    firstInner = inner;
                 } else {
-                    positionArr[tmp].setNext(positionArr[tmp + 1]);
-                    positionArr[tmp + 1].setBack(positionArr[tmp]);
+                    // inner path 연결: next / back
+                    prev.setNext(inner);
+                    inner.setBack(prev);
                 }
-                tmp++;
-            }
-            /*
-            outerPositionNum / 2 > i => 들어오는 길과 나가는 길 모두 있음
-            그 중에서 0, 마지막 => 들어오는 길만 있음
-            * */
-            //첫 pos
-            if(i == 0) {
-                centerPos.setAltNext(innerStartPos);
-                innerStartPos.setAltBack(centerPos);
-            }
-            //마지막 꼭짓점
-            if(i == (positionNum - (outerPositionNum + 1))) {
 
+                prev = inner;
+                innerCount++;
             }
-            //나머지 center에서 vertex로 나가는 방향
 
-            // 들어오는 방향 setSingleBack
-
-
-            /*
-            // 여기서 i는 각 꼭짓점
-            if(i > ((outerPositionNum + 1) / 2) || i == 0) {
-                if(i == 0 || i == (positionNum - (outerPositionNum + 1))) {
-                    //0, 마지막 꼭짓점
-                    //들어오는 길만
-                    if(i == 0) {
-                        // 시작 위치로는 중심점에서(centerPos) altNext로 연결 (지름길)
-                        centerPos.setAltNext(innerStartPos);
-                        innerStartPos.setAltBack(centerPos);
-                    }
-                    innerLastPos.setNext(eachVertexPos);
-                    eachVertexPos.setBack(innerLastPos);
-                } else {
-                    //들어오고 나가고
-                }
-            } else {
-                //나가는 길만
-                // 각 꼭짓점(eachVertexPos) 와 안쪽 첫번째 Position (innerStartPos) 간 alternative next-back 으로 연결
-                eachVertexPos.setAltNext(innerStartPos);
-                innerStartPos.setAltBack(eachVertexPos);
-                // 중심점(centerPos) 와 안쪽 중심점에 가장 가까운 Position(innerLastPos) 와 연결 (단, next만 연결, back은 X => 동적으로)
-                innerLastPos.setNext(centerPos);
-            }
-             */
+            // 마지막 inner → center 연결
+            prev.setNext(centerPos);
+            centerPos.setSingleBack(i, prev);
+            centerPos.setBack(prev); // center 기본 back도 연결
         }
     }
 
     public Position[] getPositionArr() {
         return positionArr;
-    }
-
-    // 해당 보드의 Center Position return
-    public Position getCenterPos() {
-        return positionArr[positionNum - 1];
     }
 
     public int getNumberOfPositions() {
