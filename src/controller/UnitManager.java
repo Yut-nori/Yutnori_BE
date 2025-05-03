@@ -25,42 +25,31 @@ public class UnitManager {
     }
 
     // 그룹 이동
-    public Position moveGroup(GroupUnit group, int moveDistance) {
-        for (Unit unit : group.getUnitGroup()) {
-            unit.setStatus(Unit.Status.ON);
-        }
-        //group.setPositionIdx(group.getPositionIdx() + moveDistance);
+    public void moveGroup(GroupUnit group, int distance) {
+        if (group == null) return;
 
-        Position groupCurrentPos = group.getCurrentPosition();
-
-        /* 빽도 */
-        if(moveDistance == -1) {
-            groupCurrentPos = groupCurrentPos.getBack();
-            System.out.println("******** 빽도 " + groupCurrentPos.getIndex());
-        } else {
-            /* 현 위치가 꼭짓점 */
-            if(groupCurrentPos.isVertex()) {
-                groupCurrentPos = groupCurrentPos.getAltNext();
-                //push
-                group.pushHistory(groupCurrentPos);
-                for(int i=0;i<moveDistance-1;i++) {
-                    groupCurrentPos = groupCurrentPos.getNext();
-                    //push
-                    group.pushHistory(groupCurrentPos);
-                }
-                /* 현 위치가 일반 Position */
-            } else {
-                for(int i=0;i<moveDistance;i++) {
-                    groupCurrentPos = groupCurrentPos.getNext();
-                    //push
-                    group.pushHistory(groupCurrentPos);
-                }
-            }
+        // 빽도 처리: 이전 위치로 되돌아가기
+        if (distance == -1) {
+            group.setPosition(group.popHistory()); // 스택에서 꺼낸 위치로 이동
+            return;
         }
 
-        group.setPosition(groupCurrentPos);
+        // 일반 이동 처리
+        Position currPos = group.getCurrentPosition();
+        for (int i = 0; i < distance; i++) {
+            if (currPos == null) break;
 
-        return groupCurrentPos;
+            // 현재 위치 저장
+            group.pushHistory(currPos);
+
+            // 다음 위치로 이동
+            currPos = getNextPosition(currPos, 1); // 이동은 한 칸씩
+        }
+
+        // 최종 위치 설정
+        if (currPos != null) {
+            group.setPosition(currPos);
+        }
     }
 
     // 특정 플레이어의 모든 그룹 반환
@@ -131,5 +120,16 @@ public class UnitManager {
         groupList.remove(group);
     }
 
+    // 현재 위치에서 distance만큼 이동한 위치 반환
+    public Position getNextPosition(Position current, int distance) {
+        Position pos = current;
+        for (int i = 0; i < distance; i++) {
+            if (pos == null) break;
+
+            // 멈춘 경우를 altNext, 통과는 next로 처리 가능
+            pos = pos.getNext();
+        }
+        return pos;
+    }
 
 }
