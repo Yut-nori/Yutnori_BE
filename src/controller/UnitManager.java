@@ -83,6 +83,24 @@ public class UnitManager {
             }
 
             group.setPosition(groupPosition);       //마지막으로 group 위치 설정
+
+            // 게임의 END 조건 추가
+            group.setPosition(groupPosition);  // 마지막 위치 설정
+
+// [1] 0에 도착했으면 플래그 true로 변경
+            if (groupPosition.getIndex() == 0 && !group.hasPassedZero()) {
+                group.markPassedZero();
+            }
+
+// [2] 0 이후 더 전진하면 완주
+            if (group.hasPassedZero() && groupPosition.getIndex() != 0) {
+                for (Unit unit : group.getUnitGroup()) {
+                    unit.setStatus(Unit.Status.END);
+                    break;
+                }
+                groupList.remove(group);
+                System.out.println("[완주] 유닛이 한 바퀴를 돌아 도착하였습니다.");
+            }
         } else {
             // 뒤로 한 칸 (빽도)
             group.popHistory();
@@ -175,4 +193,5 @@ public class UnitManager {
         }
         groupList.remove(group);
     }
+
 }

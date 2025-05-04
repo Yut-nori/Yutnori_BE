@@ -85,5 +85,16 @@ public class GroupUnit {
         }
         System.out.println();
     }
+
+    private boolean passedZero = false;  // 0번 지점을 지난 적 있는지 여부
+
+    public boolean hasPassedZero() {
+        return passedZero;
+    }
+
+    public void markPassedZero() {
+        this.passedZero = true;
+    }
+
 }
 

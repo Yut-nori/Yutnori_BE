@@ -182,4 +182,8 @@ public class Board {
     public Position getPosition(int index) {
         return positionArr[index];
     }
+
+    public int getOuterLength() {
+        return edgeNum * (outerPositionNum + 1);
+    }
 }
