@@ -7,11 +7,13 @@ public class Position {
     private Position altNext;
     private Position altBack;
     private int index;
+    private boolean isCenter;   // 나중에 Center 인지 확인해줄 것임.
 
     public Position(int index) {
         this.index = index;
         next = back = altNext = altBack = null;
         isVertex = false;
+        isCenter = false;
     }
 
     public boolean isVertex() {
@@ -61,28 +63,22 @@ public class Position {
         return index;
     }
 
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
     public int getNextIndex() {
         if(isVertex) return altNext.getIndex();
         else return index + 1;
     }
 
-    /* 테스트용 move 메서드 */
-    public Position testMove(int distance) {
-        Position result = this;
+    public void setCenter(boolean isCenter) {
+        this.isCenter = isCenter;
+        this.setVertex(true);
+    }
 
-        // 현재 Position이 altNext 보유
-        if(this.isVertex) {
-            result = result.getAltNext();
-            for(int i=0;i<distance-1;i++) {
-                result = result.getNext();
-            }
-        } else {
-            for(int i=0;i<distance;i++) {
-                result = result.getNext();
-            }
-        }
-
-        return result;
+    public boolean isCenter() {
+        return isCenter;
     }
 }
 

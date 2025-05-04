@@ -3,22 +3,14 @@ package controller;
 import model.board.Board;
 
 public class BoardManager {
-    private int edgeNum;
+    private static Board gameBoard;
 
-    public BoardManager(int edgeNum) {
-        this.edgeNum = edgeNum;
+    public static void createBoard(int edgeNum) {
+        gameBoard = new Board(edgeNum);
     }
 
-    /*
-    public int calcPositionNum() {
-        return 7 * edgeNum + 1;
-    }
-
-    Board에서 계산해야 될듯. edgeNum도 Board 생성 시 필요함.
-     */
-
-    public Board createBoard() {
-        return new Board(edgeNum);
+    public static Board getBoard() {
+        return gameBoard;
     }
 
 }

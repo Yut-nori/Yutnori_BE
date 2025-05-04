@@ -1,33 +1,76 @@
+//import controller.Starter;
+//import model.board.Board;
+//import model.board.CenterPosition;
+//import model.board.Path;
+//import model.board.Position;
+//
+//public class Main {
+//    public static void main(String[] args) {
+//        // 기존 게임 시작 코드 (유지)
+//        //testBoardStructure(6); // 사각형
+//        System.out.println("안녕");
+//        Starter starter = new Starter(2,  new String[] {"test1", "test2"}, 2, 4);
+//        starter.start(true, new int[]{4, 1, 3, 4});
+//
+//
+//        // 추가 테스트: 사각형, 오각형, 육각형 보드 생성 및 출력
+//        //testBoardStructure(4); // 사각형
+//        //testBoardStructure(5); // 오각형
+//        //testBoardStructure(6); // 육각형
+//
+//
+//    }
+//
+//    public static void testBoardStructure(int edgeNum) {
+//        System.out.println("\n==== " + edgeNum + "각형 보드 테스트 ====");
+//        Board board = new Board(edgeNum, 4, 2); // 외부 4칸, 내부 2칸
+//
+//        Position[] positions = board.getPositionArr();
+//        for (Position pos : positions) {
+//            if (pos == null) continue;
+//            int idx = pos.getIndex();
+//            int nextIdx = pos.getNext() != null ? pos.getNext().getIndex() : -1;
+//            int backIdx = pos.getBack() != null ? pos.getBack().getIndex() : -1;
+//            int altNextIdx = pos.getAltNext() != null ? pos.getAltNext().getIndex() : -1;
+//            int altBackIdx = pos.getAltBack() != null ? pos.getAltBack().getIndex() : -1;
+//            boolean isVertex = pos.isVertex();
+//            boolean isCenter = pos.isCenter();
+//
+//            System.out.printf(
+//                    "[Idx: %2d] → Next: %2d | Back: %2d | AltNext: %2d | AltBack: %2d | Vertex: %s | Center: %s\n",
+//                    idx, nextIdx, backIdx, altNextIdx, altBackIdx, isVertex, isCenter
+//            );
+//        }
+//
+//        CenterPosition centerPos = board.getCenterPosition();
+//        Position[] nextPositions = centerPos.getNextPositions();
+//        Position[] backPositions = centerPos.getBackPositions();
+//
+//        int nextPaths = nextPositions.length;
+//
+//        for(int i=0;i<nextPaths;i++) {
+//            System.out.println(backPositions[i].getIndex() + " -> " + centerPos.getIndex() + " -> "+ nextPositions[i].getIndex());
+//        }
+//    }
+//}
+
+
 import controller.Starter;
 
 public class Main {
     public static void main(String[] args) {
-       /*  Board b = new Board(4);
-        Player p = new Player("test", 1, false);
+        System.out.println("=== 윷놀이 게임을 시작합니다 ===");
 
-        Position[] positions = b.getPositionArr();
+        // 플레이어 수, 이름, 유닛 수, 보드 변 수 설정
+        int playerCount = 2;
+        String[] playerNames = {"player1", "player2"};
+        int unitCount = 2;
+        int edgeCount = 4;
 
-        Position currentPos = positions[0];
+        // Starter 인스턴스 생성
+        Starter starter = new Starter(playerCount, playerNames, unitCount, edgeCount);
 
-        List<Integer> result = new ArrayList<>();
-
-        //test용 윷 결과
-        int[] yutRes = {4, 4, 2, 3};
-        for(int res : yutRes) {
-            result.add(res);
-        }
-
-        for(int a : result) {
-            System.out.print("윷 결과 : " + a + " ");
-
-
-            if(a > 0) {
-                currentPos = currentPos.testMove(a);
-            }
-
-            System.out.println("현재 위치 : " + currentPos.getIndex() + " | isVertex : " + currentPos.isVertex());
-        }*/
-        Starter starter = new Starter(2,  new String[] {"test1", "test2"}, 2,4);
-        starter.start(); // Example usage to avoid "never read" warning
+        // 실제 확률 기반 플레이 실행
+        starter.start(false, null); // false = 확률 기반, testResult = null
     }
 }
