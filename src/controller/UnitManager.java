@@ -29,45 +29,46 @@ public class UnitManager {
 
         Board board = BoardManager.getBoard();
         Position groupPosition = group.getCurrentPosition();
+        boolean landedOnCenter = false; // center에 멈췄는지 여부
 
-        //빽도 아님
         if (distance > 0) {
             if (!groupPosition.isVertex() && (groupPosition.getIndex() == 0 || groupPosition.getIndex() < board.getLastOuterPosNum())) {
-                // 일반 바깥쪽 경로 -> 그냥 next
                 groupPosition = moveNormal(group, distance);
+                if (groupPosition.isCenter()) landedOnCenter = true;
 
             } else if (groupPosition.isCenter()) {
-                // center에서 altNext를 따라 시작점으로
                 moveCenterToStart(group);
+                return; // 바로 0으로 이동하므로 종료
 
-            } else if (groupPosition.isVertex()) {  // 꼭짓점인 경우 (시작점 제외)
-                if (group.hasPath()) {              // 만약 기존 Path가 있다면 Path의 종점에 도착한것임
-                    group.releasePath();            // 해당 Path는 필요 X
-                    groupPosition = moveNormal(group, distance);        //그대로 next 이동
+            } else if (groupPosition.isVertex()) {
+                if (group.hasPath()) {
+                    group.releasePath();
+                    groupPosition = moveNormal(group, distance);
+                    if (groupPosition.isCenter()) landedOnCenter = true;
                 } else {
-                    // 기존 Path 없음 -> 새로 Path를 찾아서 해당 Path대로 이동
-                    for (Path p : board.getPaths()) {               //Path 찾고
+                    for (Path p : board.getPaths()) {
                         if (p.getStartPos().getIndex() == groupPosition.getIndex()) {
                             group.setPath(p);
+                            break;
                         }
                     }
-
-                    //Path대로 이동
                     Position start = group.getCurrentPath().getStartPos();
                     Position moved = moveAndRecordHistory(group, start, distance);
                     groupPosition = board.getPosition(moved.getIndex());
+                    if (groupPosition.isCenter()) landedOnCenter = true;
                 }
 
-            } else {                            // inner position일때 (center도, 바깥도, vertex도 아님)
+            } else {
                 if (group.hasPath()) {
                     Path path = group.getCurrentPath();
                     Position p = path.getPosition(groupPosition.getIndex());
-                    int remain = distance - path.getRemainLength(groupPosition.getIndex());     //Path 종점까지 남은 거리
+                    int remain = distance - path.getRemainLength(groupPosition.getIndex());
 
-                    if (remain < 0) {       //Path 종점(끝 vertex)을 지나가지 않음 (바깥으로 나가지 않는 경우)
+                    if (remain < 0) {
                         Position moved = moveAndRecordHistory(group, p, distance);
                         groupPosition = board.getPosition(moved.getIndex());
-                    } else {                // Path 종점을 지나가는 경우 -> 종점까지 Path를 타고 남은 거리만큼 그냥 next로 바깥쪽을 돈다
+                        if (groupPosition.isCenter()) landedOnCenter = true;
+                    } else {
                         Position end = path.getEndPos();
                         while (p != end) {
                             p = p.getNext();
@@ -78,25 +79,34 @@ public class UnitManager {
                         group.releasePath();
 
                         groupPosition = moveNormal(group, remain);
+                        if (groupPosition.isCenter()) landedOnCenter = true;
                     }
                 }
             }
 
-            group.setPosition(groupPosition);       //마지막으로 group 위치 설정
+            group.setPosition(groupPosition);
 
-            // 게임의 END 조건 추가
-            group.setPosition(groupPosition);  // 마지막 위치 설정
+            // [3] center에 멈춘 경우 → altNext 경로로 0까지 이동
+            if (landedOnCenter) {
+                Position p = groupPosition.getAltNext();
+                while (p.getIndex() != 0) {
+                    group.pushHistory(p);
+                    p = p.getAltNext();
+                }
+                group.pushHistory(p);
+                group.setPosition(p);
+                groupPosition = p;
+            }
 
-// [1] 0에 도착했으면 플래그 true로 변경
+            // [1] 0에 도착하면 flag 설정
             if (groupPosition.getIndex() == 0 && !group.hasPassedZero()) {
                 group.markPassedZero();
             }
 
-// [2] 0 이후 더 전진하면 완주
+            // [2] 0 지나면 완주 처리
             if (group.hasPassedZero() && groupPosition.getIndex() != 0) {
                 for (Unit unit : group.getUnitGroup()) {
                     unit.setStatus(Unit.Status.END);
-                    break;
                 }
                 groupList.remove(group);
                 System.out.println("[완주] 유닛이 한 바퀴를 돌아 도착하였습니다.");
