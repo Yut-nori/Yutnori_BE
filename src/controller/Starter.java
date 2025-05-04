@@ -2,11 +2,15 @@ package controller;
 
 import java.util.Scanner;
 
+import view.GameView;
+import view.interfaces.*;
+
 public class Starter {
     private  int numPlayer;
     private  String[] playerNameList;
     private  int playerUnitNum;
     private  int boardEdgeNum;
+    private  IView view;
 
     private PlayManager playManager;
 
@@ -15,6 +19,7 @@ public class Starter {
         this.playerNameList = playerNameList;
         this.playerUnitNum = playerUnitNum;
         this.boardEdgeNum = boardEdgeNum;
+        this.view = new GameView();
     }
 
     // 보드 매니저 초기화 및 보드 생성
@@ -25,18 +30,15 @@ public class Starter {
     // 구조 변경[2025.04.10]: add handleRestartOrQuit 메소드
     // 게임 종료 후 재시작 및 종료 선택 기능 추가 -> End클래스는 종료만 담당
     public void start(boolean isTest, int[] testResult) {
-        this.playManager = new PlayManager(numPlayer, boardEdgeNum, playerNameList, playerUnitNum);
+        this.playManager = new PlayManager(numPlayer, boardEdgeNum, playerNameList, playerUnitNum, this.view);
         while (!playManager.checkEnd()) {
-            playManager.controlTurn(isTest, testResult);
+            playManager.GamePlay(isTest, testResult);
         }
         handleRestartOrQuit();
     }
 
     private void handleRestartOrQuit() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("게임을 다시 시작하려면 'r', 종료하려면 'q'를 입력하세요.");
-        String input = scanner.nextLine();
-
+        String input = this.view.displayOneMoreGame();
         if (input.equalsIgnoreCase("r")) {
             System.out.println("게임을 다시 시작합니다!");
             start(false, null); // 게임 재시작
