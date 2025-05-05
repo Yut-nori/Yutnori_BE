@@ -8,9 +8,10 @@
 //    public static void main(String[] args) {
 //        // 기존 게임 시작 코드 (유지)
 //        //testBoardStructure(6); // 사각형
+//
 //        System.out.println("안녕");
-//        Starter starter = new Starter(2,  new String[] {"test1", "test2"}, 2, 4);
-//        starter.start(true, new int[]{4, 1, 3, 4});
+//        Starter starter = new Starter(2,  new String[] {"test1", "test2"}, 2, 5);
+//        starter.start(true, new int[]{5, 3, 2, 4});
 //
 //
 //        // 추가 테스트: 사각형, 오각형, 육각형 보드 생성 및 출력

@@ -36,6 +36,9 @@ public class TurnManager implements ITurnManager {
             int selectedGroup = moveManager.handleUserMove(playerGroups, throwResult);
             moveManager.handlePostMoveActions(player, playerGroups, throwResult, selectedGroup);
 
+            playerGroups = groupManager.getGroupsByPlayer(player);
+
+            view.displayBoardStatus(player, groupManager.getGroupsByPlayer(player));
             //이동을 완료한 후, 모든 플레이어의 유닛의 상태를 조회하여, 게임 종료 여부 확인
             if (isAllUnitsEnded(player)) {
                 player.setWinner(true);

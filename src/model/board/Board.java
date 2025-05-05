@@ -55,10 +55,6 @@ public class Board {
                 pos.setBack(end);
                 end.setNext(pos);
                 end = pos;
-                if (i == lastOuterPosNum) {
-                    end.setNext(start);
-                    start.setBack(end);
-                }
             }
 
             /* 바깥쪽 n-2 개의 altNextPos를 가질 수 있는 Vertex 지정 */
@@ -66,27 +62,41 @@ public class Board {
                 pos.setVertex(true);
         }
 
-// Center 생성 및 등록
+        // 마지막 바깥쪽 position을 시작점과 연결해 원형 연결
+        end.setNext(start);
+        start.setBack(end);
+
+        // 디버깅 출력: 외부 연결 상태 확인
+        System.out.println("===== 외부 경로 연결 디버깅 =====");
+        for (int i = 0; i <= lastOuterPosNum; i++) {
+            Position current = positionArr[i];
+            System.out.printf("Pos %2d -> next: %2d, back: %2d%n",
+                    current.getIndex(),
+                    current.getNext() != null ? current.getNext().getIndex() : -1,
+                    current.getBack() != null ? current.getBack().getIndex() : -1
+            );
+        }
+        System.out.println("================================");
+
+        // Center 생성 및 등록
         centerPos = new CenterPosition(edgeNum, positionNum - 1);
         positionArr[positionNum - 1] = centerPos;
 
-// === 내부 경로 생성 및 연결 ===
-// 내부 인덱스 시작: 바깥쪽 인덱스 다음 번호
+        // === 내부 경로 생성 및 연결 ===
         int innerBaseIndex = lastOuterPosNum + 1;
 
-// 꼭짓점 순서: 5, 10, 15, ..., 마지막 0 (시계 방향으로)
         List<Integer> vertexOrder = new ArrayList<>();
         for (int i = 1; i < edgeNum; i++) {
             vertexOrder.add(i * (outerPositionNum + 1));
         }
-        vertexOrder.add(0); // 마지막 꼭짓점 0번 인덱스
+        vertexOrder.add(0);
 
-        for(int i=innerBaseIndex;i<positionNum;i++) {
+        for (int i = innerBaseIndex; i < positionNum; i++) {
             positionArr[i] = new Position(i);
         }
 
-        //center 연결
-        for(int i=0;i<vertexOrder.size();i++) {
+        // center 연결
+        for (int i = 0; i < vertexOrder.size(); i++) {
             int vIdx = vertexOrder.get(i);
             int innerStartPosIdx = innerBaseIndex + innerPositionNum * i;
             int innerLastPosIdx = innerBaseIndex + innerPositionNum * (i + 1) - 1;
@@ -94,11 +104,10 @@ public class Board {
             Position innerStartPos = positionArr[innerStartPosIdx];
             Position innerLastPos = positionArr[innerLastPosIdx];
 
-            // 첫번째 vertex(0) 과 마지막 vertex 제외한 나머지는 각자의 center를 경유하는 path가 있음
-            if(i < vertexOrder.size() - 2) {
+            if (i < vertexOrder.size() - 2) {
                 Position startVertex = positionArr[vertexOrder.get(i)];
                 Position destVertex;
-                if((i + edgeNum / 2) < vertexOrder.size()) {
+                if ((i + edgeNum / 2) < vertexOrder.size()) {
                     destVertex = positionArr[vertexOrder.get(i + edgeNum / 2)];
                 } else {
                     destVertex = positionArr[0];
@@ -106,33 +115,26 @@ public class Board {
 
                 Path path = paths[i] = new Path(i, startVertex);
                 path.addPosition(innerStartPos);
-                for(int j=innerStartPosIdx;j<innerLastPosIdx;j++) {
+                for (int j = innerStartPosIdx; j < innerLastPosIdx; j++) {
                     Position nextPos = positionArr[j + 1];
                     path.addPosition(nextPos);
                 }
                 path.addPosition(centerPos);
 
                 int nextOfCenterPosIdx;
-
-                // center position의 다음 position index를 정함
-                if(vIdx > Math.ceil(innerBaseIndex / 2.0d)) {
-                    //중심점에서 멈추던 안멈추던 무조건 시작점 방향으로 들어오는 경우
+                if (vIdx > Math.ceil(innerBaseIndex / 2.0d)) {
                     nextOfCenterPosIdx = centerPos.getIndex() - 1;
                 } else {
-                    if(edgeNum % 2 == 0) {
-                        //짝수
+                    if (edgeNum % 2 == 0) {
                         nextOfCenterPosIdx = innerLastPosIdx + edgeNum;
                     } else {
-                        //홀수
                         nextOfCenterPosIdx = innerLastPosIdx + edgeNum - 1;
                     }
                 }
 
                 Position nextOfCenterPos = positionArr[nextOfCenterPosIdx];
-
                 path.addPosition(nextOfCenterPos);
-                // center를 지난 다음부터는 index를 거꾸로 거슬러 올라가는 방향으로 next 연결
-                for(int j=nextOfCenterPosIdx;j>nextOfCenterPosIdx - innerPositionNum + 1;j--) {
+                for (int j = nextOfCenterPosIdx; j > nextOfCenterPosIdx - innerPositionNum + 1; j--) {
                     Position nextPos = positionArr[j - 1];
                     path.addPosition(nextPos);
                 }
@@ -140,14 +142,14 @@ public class Board {
             }
         }
 
-        //지름길(시작점으로 들어오는 방향) 은 Path와 관계없이 시작점 방향으로 altNext로 연결
+        // 지름길(시작점으로 들어오는 방향) 은 Path와 관계없이 시작점 방향으로 altNext로 연결
         int shortcutPosIdx = centerPos.getIndex() - 1;
         Position shortcutPos = positionArr[shortcutPosIdx];
         centerPos.setAltNext(shortcutPos);
         shortcutPos.setAltBack(centerPos);
 
         Position tmp = shortcutPos;
-        for(int i=shortcutPosIdx;i>shortcutPosIdx - innerPositionNum + 1;i--) {
+        for (int i = shortcutPosIdx; i > shortcutPosIdx - innerPositionNum + 1; i--) {
             Position altNextPos = positionArr[i - 1];
             tmp.setAltNext(altNextPos);
             altNextPos.setAltBack(tmp);
@@ -157,7 +159,16 @@ public class Board {
         tmp.setAltNext(positionArr[0]);
         positionArr[0].setAltBack(tmp);
 
+        System.out.println("===== center → altNext 경로 디버깅 =====");
+        Position p = centerPos;
+        while (p != null) {
+            System.out.printf("Pos %2d\n", p.getIndex());
+            if (p.getIndex() == 0) break;
+            p = p.getAltNext();
+        }
+        System.out.println("=======================================");
     }
+
 
     public Position[] getPositionArr() {
         return positionArr;
