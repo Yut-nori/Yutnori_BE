@@ -25,6 +25,14 @@ public class Unit {
         this.status = Status.READY;
         this.isGrouped = false;
     }
+
+    /* 테스터 용 생성자 */
+    public Unit(Board board, int index) {
+        this.currentBoard = board;
+        this.currentPosition = board.getPosition(index);
+        this.status = Status.READY;
+        this.isGrouped = false;
+    }
     /*
     public int getPositionIdx() {
         return currentPositionIdx;
