@@ -1,13 +1,13 @@
-package main.java.controller;
+package controller;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import main.java.model.Player;
-import main.java.model.Unit;
-import main.java.model.board.Board;
-import main.java.controller.interfaces.*;
-import main.java.view.interfaces.IView;
+import model.Player;
+import model.Unit;
+import model.board.Board;
+import controller.interfaces.*;
+import view.interfaces.IView;
 
 public class PlayManager {
     private List<Player> playerList;

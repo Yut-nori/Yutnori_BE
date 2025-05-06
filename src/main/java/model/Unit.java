@@ -1,8 +1,8 @@
-package main.java.model;
+package model;
 
-import main.java.controller.BoardManager;
-import main.java.model.board.Board;
-import main.java.model.board.Position;
+import controller.BoardManager;
+import model.board.Board;
+import model.board.Position;
 
 // Unit 에 대한 Model
 // 현재의 인덱스, 그리고 enum 을 통한 결승선 통과 여부 확인, 그룹화 되어있는지 확인

@@ -1,4 +1,4 @@
-package main.java;//import main.java.controller.Starter;
+//import main.java.controller.Starter;
 //import main.java.model.board.Board;
 //import main.java.model.board.CenterPosition;
 //import main.java.model.board.Path;
@@ -55,8 +55,7 @@ package main.java;//import main.java.controller.Starter;
 //    }
 //}
 
-
-import main.java.controller.Starter;
+import controller.Starter;
 
 public class Main {
     public static void main(String[] args) {

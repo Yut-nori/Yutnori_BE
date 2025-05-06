@@ -1,6 +1,6 @@
-package main.java.controller.interfaces;
+package controller.interfaces;
 
-import main.java.model.Player;
+import model.Player;
 
 public interface ITurnManager {
     void doPlayerTurn(Player player);

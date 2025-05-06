@@ -1,7 +1,7 @@
-package main.java.controller;
+package controller;
 
-import main.java.view.GameView;
-import main.java.view.interfaces.*;
+import view.GameView;
+import view.interfaces.*;
 
 public class Starter {
     private  int numPlayer;

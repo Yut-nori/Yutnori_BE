@@ -1,10 +1,10 @@
-package main.java.controller;
+package controller;
 import java.util.List;
-import main.java.model.GroupUnit;
-import main.java.model.Unit;
-import main.java.model.board.Board;
-import main.java.model.board.Path;
-import main.java.model.board.Position;
+import model.GroupUnit;
+import model.Unit;
+import model.board.Board;
+import model.board.Path;
+import model.board.Position;
 
 public class GroupMovement {
     private GroupManager groupManager; // 의존성 주입 (결합도 낮추기)

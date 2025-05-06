@@ -1,6 +1,6 @@
-package main.java.controller;
+package controller;
 
-import main.java.model.board.Board;
+import model.board.Board;
 
 public class BoardManager {
     private static Board gameBoard;

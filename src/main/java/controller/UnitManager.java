@@ -1,13 +1,13 @@
-package main.java.controller;
+package controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import main.java.model.GroupUnit;
-import main.java.model.Player;
-import main.java.model.Unit;
-import main.java.model.board.Board;
-import main.java.model.board.Path;
-import main.java.model.board.Position;
+import model.GroupUnit;
+import model.Player;
+import model.Unit;
+import model.board.Board;
+import model.board.Path;
+import model.board.Position;
 
 public class UnitManager {
     private List<GroupUnit> groupList;

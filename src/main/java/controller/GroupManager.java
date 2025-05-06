@@ -1,11 +1,11 @@
-package main.java.controller;
+package controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import main.java.model.GroupUnit;
-import main.java.model.Player;
-import main.java.model.Unit;
-import main.java.model.board.Position;
+import model.GroupUnit;
+import model.Player;
+import model.Unit;
+import model.board.Position;
 
 public class GroupManager {
     private List<GroupUnit> groupList;

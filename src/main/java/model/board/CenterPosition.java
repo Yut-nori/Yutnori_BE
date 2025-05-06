@@ -1,4 +1,4 @@
-package main.java.model.board;
+package model.board;
 
 public class CenterPosition extends Position {
     private int edgeNum;

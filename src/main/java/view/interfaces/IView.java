@@ -1,7 +1,7 @@
-package main.java.view.interfaces;
+package view.interfaces;
 
-import main.java.model.GroupUnit;
-import main.java.model.Player;
+import model.GroupUnit;
+import model.Player;
 
 import java.util.List;
 

@@ -1,8 +1,10 @@
-package main.java.model.Yut;
+package model.Yut;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import model.Yut.Yut;
+
 
 // NUM_OF_YUTS 으로 윷 개수 지정. 윷이 4개 이상이라면 이 클래스에서 유지.보수 가능
 // 윷을 던져 나오는 도, 개, 걸, 윷, 모, 빽도에 대한 값을 yutResult로 반환

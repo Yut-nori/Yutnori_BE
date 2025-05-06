@@ -1,7 +1,8 @@
-package main.java.model;
+package model;
 
-import main.java.model.board.Path;
-import main.java.model.board.Position;
+
+import model.board.Path;
+import model.board.Position;
 
 import java.util.List;
 import java.util.Stack;

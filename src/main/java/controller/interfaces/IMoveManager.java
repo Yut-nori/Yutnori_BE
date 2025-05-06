@@ -1,7 +1,7 @@
-package main.java.controller.interfaces;
+package controller.interfaces;
 import java.util.List;
-import main.java.model.GroupUnit;
-import main.java.model.Player;
+import model.GroupUnit;
+import model.Player;
 
 public interface IMoveManager {
     int handleUserMove(List<GroupUnit> groups, List<Integer> result);

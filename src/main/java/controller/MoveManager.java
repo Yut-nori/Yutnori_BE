@@ -1,12 +1,12 @@
-package main.java.controller;
+package controller;
 
 import java.util.List;
 
-import main.java.controller.interfaces.IMoveManager;
-import main.java.view.interfaces.IView;
-import main.java.model.GroupUnit;
-import main.java.model.Player;
-import main.java.model.board.Position;
+import controller.interfaces.IMoveManager;
+import view.interfaces.IView;
+import model.GroupUnit;
+import model.Player;
+import model.board.Position;
 
 public class MoveManager implements IMoveManager {
     private GroupManager groupManager;

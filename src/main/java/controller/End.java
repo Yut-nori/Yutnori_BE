@@ -1,4 +1,4 @@
-package main.java.controller;
+package controller;
 
 public class End {
     public static void quit() {

@@ -1,4 +1,4 @@
-package main.java.model.Yut;
+package model.Yut;
 
 import java.util.Random;
 

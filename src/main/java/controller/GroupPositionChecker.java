@@ -1,9 +1,9 @@
-package main.java.controller;
+package controller;
 
-import main.java.model.GroupUnit;
-import main.java.model.Player;
-import main.java.model.Unit;
-import main.java.model.board.Position;
+import model.GroupUnit;
+import model.Player;
+import model.Unit;
+import model.board.Position;
 
 import java.util.List;
 

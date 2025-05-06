@@ -1,6 +1,6 @@
-package main.java.controller;
+package controller;
 
-import main.java.model.Yut.YutResult;
+import model.Yut.YutResult;
 
 import java.util.ArrayList;
 import java.util.List;

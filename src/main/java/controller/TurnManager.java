@@ -1,12 +1,12 @@
-package main.java.controller;
+package controller;
 import java.util.List;
 import java.util.ArrayList;
-import main.java.controller.interfaces.IMoveManager;
-import main.java.controller.interfaces.ITurnManager;
-import main.java.model.GroupUnit;
-import main.java.model.Player;
-import main.java.model.Unit;
-import main.java.view.interfaces.IView;
+import controller.interfaces.IMoveManager;
+import controller.interfaces.ITurnManager;
+import model.GroupUnit;
+import model.Player;
+import model.Unit;
+import view.interfaces.IView;
 
 public class TurnManager implements ITurnManager {
     private int currentPlayer = 0 ;

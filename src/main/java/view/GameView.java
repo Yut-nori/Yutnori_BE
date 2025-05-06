@@ -1,12 +1,12 @@
-package main.java.view;
+package view;
 
 import java.util.List;
 import java.util.Scanner;
 
-import main.java.model.GroupUnit;
-import main.java.model.Player;
-import main.java.model.board.Position;
-import main.java.view.interfaces.IView;
+import model.GroupUnit;
+import model.Player;
+import model.board.Position;
+import view.interfaces.IView;
 
 public class GameView implements IView {
     private Scanner scanner;
