@@ -6,21 +6,21 @@ import model.board.Board;
 import model.board.Path;
 import model.board.Position;
 
-
 public class GroupMovement {
-    private GroupManager groupManager; //의존성 주입(결합도 낮추기)
+    private GroupManager groupManager; // 의존성 주입 (결합도 낮추기)
 
     public GroupMovement(GroupManager groupManager) {
         this.groupManager = groupManager;
     }
 
-    public void moveGroup(GroupUnit group ,int distance) {
+    // 인스턴스 메서드: 반드시 this.groupMovement.moveGroup(...) 로 호출해야 함
+    public void moveGroup(GroupUnit group, int distance) {
         if (group == null) return;
 
         List<GroupUnit> groupList = groupManager.getGroup();
         Board board = BoardManager.getBoard();
         Position groupPosition = group.getCurrentPosition();
-        boolean landedOnCenter = false; // center에 멈췄는지 여부
+        boolean landedOnCenter = false;
 
         if (distance > 0) {
             if (!groupPosition.isVertex() && (groupPosition.getIndex() == 0 || groupPosition.getIndex() < board.getLastOuterPosNum())) {
@@ -29,7 +29,7 @@ public class GroupMovement {
 
             } else if (groupPosition.isCenter()) {
                 moveCenterToStart(group);
-                return; // 바로 0으로 이동하므로 종료
+                return;
 
             } else if (groupPosition.isVertex()) {
                 if (group.hasPath()) {
@@ -110,12 +110,10 @@ public class GroupMovement {
         }
     }
 
-
     private Position moveNormal(GroupUnit group, int distance) {
         return moveAndRecordHistory(group, group.getCurrentPosition(), distance);
     }
 
-    // 이동하면서 history에 push (나중에 빽도용)
     private Position moveAndRecordHistory(GroupUnit group, Position start, int distance) {
         Position current = start;
         for (int i = 0; i < distance; i++) {
@@ -125,7 +123,6 @@ public class GroupMovement {
         return current;
     }
 
-    // Center position에서 시작점으로 들어감
     private void moveCenterToStart(GroupUnit group) {
         Position p = group.getCurrentPosition();
         while (p.getIndex() != 0) {
