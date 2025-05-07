@@ -70,7 +70,12 @@ public class Main {
         // Starter 인스턴스 생성
         Starter starter = new Starter(playerCount, playerNames, unitCount, edgeCount);
 
+        int[][] eachTestResult = new int[playerCount][];
+
+        eachTestResult[0] = new int[]{5, 3, 2, 2, 1, 3, 4};
+        eachTestResult[1] = new int[]{3, 4, 2, -1, 5, -1, 4};
+
         // 실제 확률 기반 플레이 실행
-        starter.start(false, null); // false = 확률 기반, testResult = null
+        starter.start(false, eachTestResult); // false = 확률 기반, testResult = null
     }
 }

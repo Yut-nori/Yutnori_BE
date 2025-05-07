@@ -71,9 +71,9 @@ public class PlayManager {
         return false;
     }
 
-    public void GamePlay(boolean isTest, int[] testResult) {
+    public void GamePlay(boolean isTest, int[][] testResult) {
         Player current = this.playerList.get(currentPlayer);
-        turnManager.doPlayerTurn(current);
+        turnManager.doPlayerTurn(current, isTest, testResult);
         if(checkEnd()){
             return;
         }

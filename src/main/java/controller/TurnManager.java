@@ -1,6 +1,10 @@
 package controller;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 import controller.interfaces.IMoveManager;
 import controller.interfaces.ITurnManager;
 import model.GroupUnit;
@@ -8,7 +12,8 @@ import model.Player;
 import model.Unit;
 import view.interfaces.IView;
 
-public class TurnManager implements ITurnManager {
+public class
+TurnManager implements ITurnManager {
     private int currentPlayer = 0 ;
     private int numPlayer = 2;
     private GroupManager groupManager;
@@ -28,9 +33,14 @@ public class TurnManager implements ITurnManager {
     //yut 결과를 throwReuslt에 저장, throwResult가 Empty 되기 전까지, 플레이어가 유닛 이동 명령을 내릴 수 있음
     //유닛 이동은 groupManager에서 실행
     @Override
-    public void doPlayerTurn(Player player) {
+    public void doPlayerTurn(Player player, boolean isTest, int[][] testResult) {
         List<Integer> throwResult = new ArrayList<>();
-        throwResult.addAll(player.throwYut());
+        if(!isTest) throwResult.addAll(player.throwYut());
+        else {
+            int testResultIdx = player.getPlayerID();
+            int[] playerTestResult = testResult[testResultIdx];
+            throwResult = Arrays.stream(playerTestResult).boxed().collect(Collectors.toList());
+        }
         List<GroupUnit> playerGroups = groupManager.getGroupsByPlayer(player);
         while (!throwResult.isEmpty()) {
             int selectedGroup = moveManager.handleUserMove(playerGroups, throwResult);

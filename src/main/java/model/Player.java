@@ -13,11 +13,17 @@ public class Player {
     private List<Unit> units;
     private YutManager yutManager;
 
+    /* 삭제 예정 */
+    private static int playerIDCount = 0;
+    private int playerID;
+
     public Player(String playerName, int unitNum, boolean isWinner) {
         this.playerName = playerName;
         this.unitNum = unitNum;
         this.isWinner = isWinner;
         this.units = new ArrayList<Unit>();
+
+        playerID = playerIDCount++;
     }
 
     // 윷 던지기 (YutManager를 사용)
@@ -50,4 +56,7 @@ public class Player {
     public int getUnitNum() {
         return unitNum;
     }
+
+    /* 삭제 예정 */
+    public int getPlayerID() { return playerID; }
 }
