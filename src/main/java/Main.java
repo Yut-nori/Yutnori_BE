@@ -76,6 +76,6 @@ public class Main {
         eachTestResult[1] = new int[]{3, 4, 2, -1, 5, -1, 4};
 
         // 실제 확률 기반 플레이 실행
-        starter.start(false, eachTestResult); // false = 확률 기반, testResult = null
+        starter.start(true, eachTestResult); // false = 확률 기반, testResult = null
     }
 }

@@ -7,7 +7,7 @@ import model.board.Path;
 import model.board.Position;
 
 public class GroupMovement {
-    private GroupManager groupManager; // 의존성 주입 (결합도 낮추기)
+    private GroupManager groupManager;
 
     public GroupMovement(GroupManager groupManager) {
         this.groupManager = groupManager;
@@ -23,6 +23,9 @@ public class GroupMovement {
         boolean landedOnCenter = false;
 
         if (distance > 0) {
+            System.out.println(groupPosition.isCenter());
+            System.out.println(groupPosition.getAltNext());
+            System.out.println(groupPosition.getIndex());
             if (!groupPosition.isVertex() && (groupPosition.getIndex() == 0 || groupPosition.getIndex() < board.getLastOuterPosNum())) {
                 groupPosition = moveNormal(group, distance);
                 if (groupPosition.isCenter()) landedOnCenter = true;
