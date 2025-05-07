@@ -203,5 +203,4 @@ public class UnitManager {
         }
         groupList.remove(group);
     }
-
 }
