@@ -18,13 +18,25 @@ public class GroupPositionChecker {
         List<GroupUnit> groups = groupManager.getGroupsByPlayer(current);
         GroupUnit currentGroup = null;
         int findEqual = 0;
+
         for (GroupUnit group : groups) {
             if (group.getCurrentPosition().equals(position)) {
-                //조회 중, 자기 자신을 만난 경우, ++
+
+                // 병합 대상 그룹이 READY 에 있으면 합치지 않음.
+                boolean allReady = true;
+                for (Unit unit : group.getUnitGroup()) {
+                    if (unit.getStatus() != Unit.Status.READY) {
+                        allReady = false;
+                        break;
+                    }
+                }
+                if (allReady) continue;
+
+                // 조회 중 자기 자신을 만난 경우도 포함되므로 ++
                 findEqual++;
             }
+
             if (findEqual >= 2) {
-                //자기 자신 이외에, 같은 사용자 그룹을 발견하면,
                 currentGroup = group;
                 groupManager.mergeGroups(currentGroup, position);
                 return true;
@@ -39,6 +51,16 @@ public class GroupPositionChecker {
             if (group.getCurrentPosition().equals(position)
                     && !group.getPlayer().getPlayerName().equals(current.getPlayerName())) {
 
+                // READY 상태에 있는 상대 Unit 은 잡지 않음.
+                boolean allReady = true;
+                for (Unit unit : group.getUnitGroup()) {
+                    if (unit.getStatus() != Unit.Status.READY) {
+                        allReady = false;
+                        break;
+                    }
+                }
+
+                if (allReady) continue;
                 for (Unit unit : group.getUnitGroup()) {
                     unit.setStatus(Unit.Status.READY);
                     unit.setPosition(BoardManager.getBoard().getPositionArr()[0]);
