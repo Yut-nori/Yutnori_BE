@@ -44,16 +44,6 @@ public class GroupMovement {
                 moveInnerPath(group, myPath, distance);
 
             }
-
-            /*
-            System.out.println("[디버깅] 최종 위치 인덱스: " + groupPosition.getIndex());
-            System.out.println("[디버깅] passedZero 상태: " + group.hasPassedZero());
-
-            if (groupPosition.getIndex() == 0 && !group.hasPassedZero()) {
-                group.markPassedZero();
-                System.out.println("[디버깅] 0번을 통과함. passedZero 플래그 ON");
-            }
-
             if (group.hasPassedZero() && groupPosition.getIndex() != 0) {
                 for (Unit unit : group.getUnitGroup()) {
                     unit.setStatus(Unit.Status.END);
@@ -62,36 +52,7 @@ public class GroupMovement {
                 System.out.println("[완주] 유닛이 한 바퀴를 돌아 도착하였습니다.");
             }
 
-            System.out.println("[디버깅] 최종 위치 인덱스: " + groupPosition.getIndex());
-            System.out.println("[디버깅] passedZero 상태: " + group.hasPassedZero());
 
-            if (groupPosition.getIndex() == 0 && !group.hasPassedZero()) {
-                group.markPassedZero();
-                System.out.println("[디버깅] 0번을 통과함. passedZero 플래그 ON");
-            }
-
-            if (group.hasPassedZero() && groupPosition.getIndex() != 0) {
-                for (Unit unit : group.getUnitGroup()) {
-                    unit.setStatus(Unit.Status.END);
-                }
-                groupManager.getGroup().remove(group);
-                System.out.println("[완주] 유닛이 한 바퀴를 돌아 도착하였습니다.");
-            }
-
-            if (groupPosition.getIndex() == 0 && !group.hasPassedZero()) {
-                group.markPassedZero();
-                System.out.println("[디버깅] 0번을 통과함. passedZero 플래그 ON");
-            }
-
-            if (group.hasPassedZero() && groupPosition.getIndex() != 0) {
-                for (Unit unit : group.getUnitGroup()) {
-                    unit.setStatus(Unit.Status.END);
-                }
-                groupManager.getGroup().remove(group);
-                System.out.println("[완주] 유닛이 한 바퀴를 돌아 도착하였습니다.");
-            }
-
-             */
 
         } else {
             // 뒤로 한 칸 (빽도)
@@ -142,6 +103,22 @@ public class GroupMovement {
             }
         }
 
+        group.printHistoryStack();
+
+        // 0번 통과 여부 확인 및 플래그 ON
+        if (group.getCurrentPosition().getIndex() == 0 && !group.hasPassedZero()) {
+            group.markPassedZero();
+            System.out.println("[디버깅] 0번을 통과함. passedZero 플래그 ON");
+        }
+
+        // 완주 조건 확인
+        if (group.hasPassedZero() && group.getCurrentPosition().getIndex() != 0) {
+            for (Unit unit : group.getUnitGroup()) {
+                unit.setStatus(Unit.Status.END);
+            }
+            groupManager.getGroup().remove(group);
+            System.out.println("[완주] 유닛이 한 바퀴를 돌아 도착하였습니다.");
+        }
         group.printHistoryStack();
     }
 

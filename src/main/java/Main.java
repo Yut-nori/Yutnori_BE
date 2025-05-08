@@ -72,8 +72,8 @@ public class Main {
 
         int[][] eachTestResult = new int[playerCount][];
 
-        eachTestResult[0] = new int[]{4};
-        eachTestResult[1] = new int[]{5,5,5,4,5,4,3,2,1};
+        eachTestResult[0] = new int[]{1};
+        eachTestResult[1] = new int[]{5,3,3,1,5,4,3,2,1,3};
         //{1,-1,-1,-1,4};
         //{4, 4, 2, -1, 5, -1, 4};
         //{3, 3, 3, 3, 3, 3, 3};
