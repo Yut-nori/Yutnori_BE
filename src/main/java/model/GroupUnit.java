@@ -109,5 +109,9 @@ public class GroupUnit {
         this.passedZero = true;
     }
 
+    public void markNotPassedZero() {
+        this.passedZero = false;
+    }
+
 }
 
