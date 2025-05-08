@@ -104,7 +104,6 @@ public class Board {
             int innerLastPosIdx = innerBaseIndex + innerPositionNum * (i + 1) - 1;
 
             Position innerStartPos = positionArr[innerStartPosIdx];
-            Position innerLastPos = positionArr[innerLastPosIdx];
 
             List<Position> eachInnerPath = new ArrayList<>();
 
@@ -168,6 +167,7 @@ public class Board {
         tmp.setAltNext(positionArr[0]);
         positionArr[0].setAltBack(tmp);
 
+        /* center에서 altNext의 경로 디버깅
         System.out.println("===== center → altNext 경로 디버깅 =====");
         Position p = centerPos;
         while (p != null) {
@@ -175,7 +175,7 @@ public class Board {
             if (p.getIndex() == 0) break;
             p = p.getAltNext();
         }
-        System.out.println("=======================================");
+        System.out.println("======================================="); */
     }
 
 
