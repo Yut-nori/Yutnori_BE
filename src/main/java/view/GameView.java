@@ -55,6 +55,7 @@ public class GameView implements IView {
             case 1 -> System.out.println("[*] 상대방 유닛을 잡았습니다! 윷을 한 번 더 던집니다!");
             case 2 -> System.out.println("[*] 아군 유닛과 합쳐졌습니다.");
             case 3 -> System.out.println("[*] 결승선을 통과했습니다! 유닛이 제거됩니다.");
+            case 4 -> System.out.println("[*] 첫 윷의 결과가 빽도 입니다! 턴이 넘어갑니다.");
             default -> System.out.println("[*] 일반 이동입니다.");
         }
     }
