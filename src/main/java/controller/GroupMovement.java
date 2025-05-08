@@ -18,26 +18,26 @@ public class GroupMovement {
         System.out.println("Group Positon: "+group.getCurrentPosition().getIndex() + ", this turn move Distance : "+distance);
         if (group == null) return;
 
-        List<GroupUnit> groupList = groupManager.getGroup();
+        //List<GroupUnit> groupList = groupManager.getGroup();
         Board board = BoardManager.getBoard();
         Position groupPosition = group.getCurrentPosition();
         boolean landedOnCenter = false;
 
         //빽도를 제외한 움직임
         if (distance > 0) {
-            System.out.println("moving....(not back)");
-            if (!groupPosition.isVertex() && (groupPosition.getIndex() == 0 || groupPosition.getIndex() < board.getLastOuterPosNum())) {
-                System.out.println("test case 1");
+            if (!groupPosition.isVertex() && (groupPosition.getIndex() == 0 || groupPosition.getIndex() <= board.getLastOuterPosNum())) {
                 groupPosition = moveNormal(group, distance);
                 if (groupPosition.isCenter()) landedOnCenter = true;
 
-            } else if (groupPosition.isCenter()) {
-                System.out.println("test case 2");
+            } 
+            //위치가 센터인 경우
+            else if (groupPosition.isCenter()) {
                 moveCenterToStart(group);
                 return;
 
-            } else if (groupPosition.isVertex()) {
-                System.out.println("test case 3");
+            } 
+            //위치가 vertex인 경우
+            else if (groupPosition.isVertex()) {
                 if (group.hasPath()) {
                     group.releasePath();
                     groupPosition = moveNormal(group, distance);
@@ -56,19 +56,16 @@ public class GroupMovement {
                 }
             }
             else {
-                System.out.println("test case 4");
                 if (group.hasPath()) {
                     Path path = group.getCurrentPath();
                     Position p = path.getPosition(groupPosition.getIndex());
                     int remain = distance - path.getRemainLength(groupPosition.getIndex());
 
                     if (remain < 0) {
-                        System.out.println("test case 5");
                         Position moved = moveAndRecordHistory(group, p, distance);
                         groupPosition = board.getPosition(moved.getIndex());
                         if (groupPosition.isCenter()) landedOnCenter = true;
                     } else {
-                        System.out.println("test case 6");
                         Position end = path.getEndPos();
                         while (p != end) {
                             p = p.getNext();
@@ -96,7 +93,6 @@ public class GroupMovement {
             }
 
             // 최종 위치 적용
-            System.out.println("calculated position : " + groupPosition.getIndex());
             group.setPosition(groupPosition);
         }
         else {
@@ -168,9 +164,9 @@ public class GroupMovement {
         for (int i = 0; i < distance; i++) {
             current = current.getNext();
             group.pushHistory(current);
-            System.out.println("Unitgroup is moving to "+ current.getIndex());
+            //System.out.println("Unitgroup is moving to "+ current.getIndex());
             if(current.getIndex() == 0){
-                System.out.println("UnitGroup pass zero!!");
+                //System.out.println("UnitGroup pass zero!!");
                 group.markPassedZero();
             }
         }
