@@ -49,14 +49,15 @@ public class MoveManager implements IMoveManager {
         Position newPos = completedGroup.getCurrentPosition();
         int result = 0;
 
-        if (groupPositionChecker.isEnemytInPosition(current, newPos)) {
+        //hasPassedZero()를 검사하도록 추가
+        if (newPos.getIndex() > 0 && completedGroup.hasPassedZero()) {
+            result = GOAL_REACHED;
+            groupManager.unitPassed(completedGroup); // 정확한 그룹 제거
+        } else if (groupPositionChecker.isEnemytInPosition(current, newPos)) {
             result = ENEMY_CAPTURED;
             throwResult.addAll(current.throwYut());
         } else if (groupPositionChecker.isFriendlyInPosition(current, newPos)) {
             result = FRIEND_STACKED;
-        } else if (newPos.getIndex() > BoardManager.getBoard().getNumberOfPositions()) {
-            result = GOAL_REACHED;
-            groupManager.unitPassed(completedGroup); // 정확한 그룹 제거
         }
 
         view.displayMoveResult(result);
