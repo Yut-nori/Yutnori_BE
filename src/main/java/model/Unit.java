@@ -25,23 +25,10 @@ public class Unit {
         this.status = Status.READY;
         this.isGrouped = false;
     }
-    /*
-    public int getPositionIdx() {
-        return currentPositionIdx;
-    }
-
-     */
 
     public Position getCurrentPosition() {
         return currentPosition;
     }
-
-    /*
-    public void setPositionIdx(int currentPositionIdx) {
-        this.currentPositionIdx = currentPositionIdx;
-    }
-
-     */
 
     public void setPosition(Position position) {
         this.currentPosition = position;

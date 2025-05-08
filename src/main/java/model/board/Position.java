@@ -80,5 +80,10 @@ public class Position {
     public boolean isCenter() {
         return isCenter;
     }
+
+    public void printPositionInfo() {
+        System.out.println("POSITION INDEX : " + this.getIndex() + ", IS VERTEX? : " + this.isVertex() + ", IS CENTER? : " + this.isCenter());
+        System.out.println("BACK POS : " + this.getBack().getIndex() + " ... " + this.getIndex() + " ... NEXT POS : " + this.getNext().getIndex());
+    }
 }
 

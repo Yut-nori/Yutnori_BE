@@ -1,7 +1,6 @@
 package model;
 
 
-import model.board.Path;
 import model.board.Position;
 
 import java.util.List;
@@ -12,15 +11,20 @@ public class GroupUnit {
     private List<Unit> unitGroup;
     private Position currentPosition;
     private Stack<Integer> groupPathHistory; // 현재 group의 경로 히스토리 스택
+    private boolean isCenterToStart;
     private boolean isInPath;
-    private Path currentPath;
+    private int pathID;
 
     public GroupUnit(Player player, List<Unit> unitGroup) {
         this.player = player;
         this.unitGroup = unitGroup;
         this.currentPosition = unitGroup.get(0).getCurrentPosition();
         this.groupPathHistory = new Stack<>();
+
+        isCenterToStart = false;
         isInPath = false;
+
+        pathID = -1;
     }
 
     public Player getPlayer() {
@@ -39,25 +43,31 @@ public class GroupUnit {
         return currentPosition;
     }
 
-    public void setPath(Path path) {
+    public void setCenterToStart(boolean isCenterToStart) {
+        this.isCenterToStart = isCenterToStart;
+    }
+
+    public boolean isCenterToStart() {
+        return isCenterToStart;
+    }
+
+    public void setPath(int pathID) {
         isInPath = true;
-        currentPath = path;
+        this.pathID = pathID;
     }
 
     public void releasePath() {
         isInPath = false;
-        currentPath = null;
+        pathID = -1;
     }
 
     public boolean hasPath() {
         return isInPath;
     }
 
-    public Path getCurrentPath() {
-        return currentPath;
+    public int getCurrentPathID() {
+        return pathID;
     }
-
-
 
     public void setPosition(Position position) {
         this.currentPosition = position;

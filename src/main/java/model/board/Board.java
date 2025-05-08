@@ -1,7 +1,9 @@
 package model.board;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Board {
     private int edgeNum;            // 변 개수 (사각형 -> 4, 오각형 -> 5, n각형 -> n)
@@ -10,11 +12,10 @@ public class Board {
     private int outerPositionNum;   // 바깥쪽 각 변마다 꼭짓점 사이의 Position 개수 (기본 : 4개)
     private int innerPositionNum;   // 꼭짓점과 중심점 사이의 Position 개수 (기본 : 2개)
     private Position start, end;
-    private CenterPosition centerPos;
+    private Position centerPos;
 
     private Position[] positionArr;
-
-    private Path[] paths;
+    private Map<Integer, List<Position>> innerPaths;
 
     /* n각형 보드 기본 -> 나중에 vertex와 vertex 사이끼리의 길이를 조정할 수 있고,
     vertex와 center 사이의 거리를 조정할 수도 있음.  */
@@ -34,7 +35,8 @@ public class Board {
 
         start = end = null;
 
-        paths = new Path[edgeNum - 2];
+        //paths = new Path[edgeNum - 2];
+        innerPaths = new HashMap<>();
         createPositions();
     }
 
@@ -78,8 +80,9 @@ public class Board {
         System.out.println("================================");
 
         // Center 생성 및 등록
-        centerPos = new CenterPosition(edgeNum, positionNum - 1);
+        centerPos = new Position(positionNum - 1);
         positionArr[positionNum - 1] = centerPos;
+        centerPos.setCenter(true);
 
         // === 내부 경로 생성 및 연결 ===
         int innerBaseIndex = lastOuterPosNum + 1;
@@ -91,7 +94,7 @@ public class Board {
         vertexOrder.add(0);
 
         for (int i = innerBaseIndex; i < positionNum; i++) {
-            positionArr[i] = new Position(i);
+            if(i != positionNum - 1) positionArr[i] = new Position(i);
         }
 
         // center 연결
@@ -103,6 +106,8 @@ public class Board {
             Position innerStartPos = positionArr[innerStartPosIdx];
             Position innerLastPos = positionArr[innerLastPosIdx];
 
+            List<Position> eachInnerPath = new ArrayList<>();
+
             if (i < vertexOrder.size() - 2) {
                 Position startVertex = positionArr[vertexOrder.get(i)];
                 Position destVertex;
@@ -112,13 +117,16 @@ public class Board {
                     destVertex = positionArr[0];
                 }
 
-                Path path = paths[i] = new Path(i, startVertex);
-                path.addPosition(innerStartPos);
+                eachInnerPath.add(startVertex);
+                eachInnerPath.add(innerStartPos);
+
+                // 시작 꼭짓점 -> 중심점까지 innerPath 등록
                 for (int j = innerStartPosIdx; j < innerLastPosIdx; j++) {
                     Position nextPos = positionArr[j + 1];
-                    path.addPosition(nextPos);
+                    //path.addPosition(nextPos);
+                    eachInnerPath.add(nextPos);
                 }
-                path.addPosition(centerPos);
+                eachInnerPath.add(centerPos);
 
                 int nextOfCenterPosIdx;
                 if (vIdx > Math.ceil(innerBaseIndex / 2.0d)) {
@@ -132,13 +140,15 @@ public class Board {
                 }
 
                 Position nextOfCenterPos = positionArr[nextOfCenterPosIdx];
-                path.addPosition(nextOfCenterPos);
+                eachInnerPath.add(nextOfCenterPos);
                 for (int j = nextOfCenterPosIdx; j > nextOfCenterPosIdx - innerPositionNum + 1; j--) {
                     Position nextPos = positionArr[j - 1];
-                    path.addPosition(nextPos);
+                    eachInnerPath.add(nextPos);
                 }
-                path.addPosition(destVertex);
+                eachInnerPath.add(destVertex);
             }
+
+            innerPaths.put(vIdx, eachInnerPath);
         }
 
         // 지름길(시작점으로 들어오는 방향) 은 Path와 관계없이 시작점 방향으로 altNext로 연결
@@ -177,16 +187,20 @@ public class Board {
         return positionNum;
     }
 
-    public CenterPosition getCenterPosition() {
-        return centerPos;
+    public Position getCenterPos() {
+        return positionArr[positionNum - 1];
     }
 
     public int getLastOuterPosNum() {
         return (outerPositionNum + 1) * edgeNum - 1;
     }
 
-    public Path[] getPaths() {
-        return paths;
+    public List<Position> getInnerPath(int vertexIndex) {
+        return innerPaths.get(vertexIndex);
+    }
+
+    public Map<Integer, List<Position>> getInnerPaths() {
+        return innerPaths;
     }
 
     public Position getPosition(int index) {
