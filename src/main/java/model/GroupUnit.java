@@ -78,6 +78,9 @@ public class GroupUnit {
         return groupPathHistory.peek();
     }
 
+    public boolean isHistoryEmpty() {
+        return groupPathHistory.isEmpty();
+    }
 
     public void printHistoryStack() {
         for(int i=0;i<groupPathHistory.size();i++) {

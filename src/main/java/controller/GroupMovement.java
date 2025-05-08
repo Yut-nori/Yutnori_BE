@@ -23,9 +23,6 @@ public class GroupMovement {
         boolean landedOnCenter = false;
 
         if (distance > 0) {
-            System.out.println(groupPosition.isCenter());
-            System.out.println(groupPosition.getAltNext());
-            System.out.println(groupPosition.getIndex());
             if (!groupPosition.isVertex() && (groupPosition.getIndex() == 0 || groupPosition.getIndex() < board.getLastOuterPosNum())) {
                 groupPosition = moveNormal(group, distance);
                 if (groupPosition.isCenter()) landedOnCenter = true;
@@ -79,6 +76,21 @@ public class GroupMovement {
             }
 
             group.setPosition(groupPosition);
+            System.out.println("[디버깅] 최종 위치 인덱스: " + groupPosition.getIndex());
+            System.out.println("[디버깅] passedZero 상태: " + group.hasPassedZero());
+
+            if (groupPosition.getIndex() == 0 && !group.hasPassedZero()) {
+                group.markPassedZero();
+                System.out.println("[디버깅] 0번을 통과함. passedZero 플래그 ON");
+            }
+
+            if (group.hasPassedZero() && groupPosition.getIndex() != 0) {
+                for (Unit unit : group.getUnitGroup()) {
+                    unit.setStatus(Unit.Status.END);
+                }
+                groupManager.getGroup().remove(group);
+                System.out.println("[완주] 유닛이 한 바퀴를 돌아 도착하였습니다.");
+            }
 
             // [3] center에 멈춘 경우 → altNext 경로로 0까지 이동
             if (landedOnCenter) {
@@ -91,25 +103,86 @@ public class GroupMovement {
                 group.setPosition(p);
                 groupPosition = p;
             }
+            groupPosition = group.getCurrentPosition(); // 다시 한 번 명확하게 갱신
+            System.out.println("[디버깅] 최종 위치 인덱스: " + groupPosition.getIndex());
+            System.out.println("[디버깅] passedZero 상태: " + group.hasPassedZero());
 
-            // [1] 0에 도착하면 flag 설정
             if (groupPosition.getIndex() == 0 && !group.hasPassedZero()) {
                 group.markPassedZero();
+                System.out.println("[디버깅] 0번을 통과함. passedZero 플래그 ON");
             }
 
-            // [2] 0 지나면 완주 처리
             if (group.hasPassedZero() && groupPosition.getIndex() != 0) {
                 for (Unit unit : group.getUnitGroup()) {
                     unit.setStatus(Unit.Status.END);
                 }
-                groupList.remove(group);
+                groupManager.getGroup().remove(group);
+                System.out.println("[완주] 유닛이 한 바퀴를 돌아 도착하였습니다.");
+            }
+
+
+            // 최종 위치 적용
+            group.setPosition(groupPosition);
+
+            if (groupPosition.getIndex() == 0 && !group.hasPassedZero()) {
+                group.markPassedZero();
+                System.out.println("[디버깅] 0번을 통과함. passedZero 플래그 ON");
+            }
+
+            if (group.hasPassedZero() && groupPosition.getIndex() != 0) {
+                for (Unit unit : group.getUnitGroup()) {
+                    unit.setStatus(Unit.Status.END);
+                }
+                groupManager.getGroup().remove(group);
                 System.out.println("[완주] 유닛이 한 바퀴를 돌아 도착하였습니다.");
             }
         } else {
             // 뒤로 한 칸 (빽도)
+            if (group.isHistoryEmpty()) {
+                System.out.println("출발한 유닛이 없어 [빽도]를 진행할 수 없습니다. 넘어갑니다.");
+                return;
+            }
+            if (group.getCurrentPosition().getIndex() == 0 && group.getUnitGroup().get(0).getStatus() == Unit.Status.ON) {
+                if (distance == -1) {
+                    System.out.println("[빽도: 0 → 이전 경로로 복귀]");
+                    group.popHistory(); // 0 제거
+
+                    if (group.isHistoryEmpty()) {
+                        // 1 → 0 → 빽도 → 또 빽도인 경우: 스택이 비었으면 0으로 강제 복귀
+                        // [1 → 0 → 빽도 → 또 빽도] 상황
+                        // 원래 1에서 왔다고 간주하고 다시 1로 되돌림
+                        System.out.println("스택이 비었기 때문에 1에서 왔던 것으로 간주하여 1번으로 이동합니다.");
+                        Position backToOne = board.getPosition(1);
+                        group.pushHistory(backToOne);
+                        group.setPosition(backToOne);
+                    } else {
+                        // 정상적으로 이전 경로로 이동
+                        Position backPos = board.getPosition(group.peekHistory());
+                        group.setPosition(backPos);
+                    }
+                } else {
+                    // 빽도가 아니면 → 완주로 처리
+                    for (Unit unit : group.getUnitGroup()) {
+                        unit.setStatus(Unit.Status.END);
+                    }
+                    groupManager.getGroup().remove(group);
+                    System.out.println("[완주] 유닛이 0을 통과한 후 다시 이동하여 종료됩니다.");
+                }
+                return;
+            }
+
+            // 일반 빽도 처리
+            System.out.println("[빽도]를 진행합니다.");
             group.popHistory();
-            Position backPos = board.getPosition(group.peekHistory());
-            group.setPosition(backPos);
+
+            if (group.isHistoryEmpty()) {
+                Position startPos = board.getPosition(0);
+                group.pushHistory(startPos);         // 0 위치 기록
+                group.setPosition(startPos);         // 0 위치 이동
+            } else {
+                Position backPos = board.getPosition(group.peekHistory());
+                group.setPosition(backPos);
+            }
         }
     }
 
@@ -123,6 +196,17 @@ public class GroupMovement {
             current = current.getNext();
             group.pushHistory(current);
         }
+
+        for (Unit unit : group.getUnitGroup()) {
+            if (unit.getStatus() == Unit.Status.READY) {
+                unit.setStatus(Unit.Status.ON);
+            }
+        }
+        System.out.println("[디버깅] 현재 그룹의 유닛 상태:");
+        for (Unit unit : group.getUnitGroup()) {
+            System.out.println(" - 유닛 상태: " + unit.getStatus() + ", 위치: " + unit.getCurrentPosition().getIndex());
+        }
+
         return current;
     }
 

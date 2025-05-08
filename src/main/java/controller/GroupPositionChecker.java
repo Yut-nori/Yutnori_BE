@@ -59,11 +59,9 @@ public class GroupPositionChecker {
                         break;
                     }
                 }
-
                 if (allReady) continue;
+                groupManager.resetGroupToStart(group);
                 for (Unit unit : group.getUnitGroup()) {
-                    unit.setStatus(Unit.Status.READY);
-                    unit.setPosition(BoardManager.getBoard().getPositionArr()[0]);
                     groupManager.createGroup(group.getPlayer(), unit);
                 }
                 groupList.remove(group);
