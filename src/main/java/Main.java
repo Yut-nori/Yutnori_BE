@@ -72,11 +72,15 @@ public class Main {
 
         int[][] eachTestResult = new int[playerCount][];
 
-        eachTestResult[0] = new int[]{1};
-        eachTestResult[1] = new int[]{5,3,3,1,5,4,3,2,1,3};
+        eachTestResult[0] = new int[]{1,-1,-1,-1,4};
+        eachTestResult[1] = new int[]{10,1,2,3,4,5,1,2,3,4,5};
+        /* 테스트 케이스 */
         //{1,-1,-1,-1,4};
         //{4, 4, 2, -1, 5, -1, 4};
         //{3, 3, 3, 3, 3, 3, 3};
+        //{5,3,3,1,5,4,3,2,1,3};
+        //{10,1,2,3,4,5,1,2,3,4,5};
+        //{5,7, -1, -1};
 
         // 실제 확률 기반 플레이 실행
         starter.start(true, eachTestResult); // false = 확률 기반, testResult = null

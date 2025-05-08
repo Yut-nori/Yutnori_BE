@@ -17,6 +17,7 @@ public class MoveManager implements IMoveManager {
     public static final int ENEMY_CAPTURED = 1;
     public static final int FRIEND_STACKED = 2;
     public static final int GOAL_REACHED = 3;
+    public static final int FIRST_MOVE_BACK = 4;
 
     public MoveManager(GroupManager groupManager, IView view) {
         this.groupManager = groupManager;
@@ -58,6 +59,8 @@ public class MoveManager implements IMoveManager {
             throwResult.addAll(current.throwYut());
         } else if (groupPositionChecker.isFriendlyInPosition(current, newPos)) {
             result = FRIEND_STACKED;
+        } else if(completedGroup.isHistoryEmpty()){
+            result =FIRST_MOVE_BACK;
         }
 
         view.displayMoveResult(result);

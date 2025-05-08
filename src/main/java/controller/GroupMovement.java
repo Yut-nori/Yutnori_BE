@@ -22,7 +22,7 @@ public class GroupMovement {
 
         if (distance > 0) {
             //일반 바깥쪽
-            if (!groupPosition.isVertex() && (groupPosition.getIndex() == 0 || groupPosition.getIndex() < board.getLastOuterPosNum())) {
+            if (!groupPosition.isVertex() && (groupPosition.getIndex() == 0 || groupPosition.getIndex() <= board.getLastOuterPosNum())) {
                 moveNormal(group, distance);
 
             // 현 위치 Center
@@ -44,20 +44,11 @@ public class GroupMovement {
                 moveInnerPath(group, myPath, distance);
 
             }
-            if (group.hasPassedZero() && groupPosition.getIndex() != 0) {
-                for (Unit unit : group.getUnitGroup()) {
-                    unit.setStatus(Unit.Status.END);
-                }
-                groupManager.getGroup().remove(group);
-                System.out.println("[완주] 유닛이 한 바퀴를 돌아 도착하였습니다.");
-            }
-
-
 
         } else {
             // 뒤로 한 칸 (빽도)
             if (group.isHistoryEmpty()) {
-                System.out.println("출발한 유닛이 없어 [빽도]를 진행할 수 없습니다. 넘어갑니다.");
+                //System.out.println("출발한 유닛이 없어 [빽도]를 진행할 수 없습니다. 넘어갑니다.");
                 return;
             }
             if (group.getCurrentPosition().getIndex() == 0 && group.getUnitGroup().get(0).getStatus() == Unit.Status.ON) {
@@ -73,6 +64,7 @@ public class GroupMovement {
                         Position backToOne = board.getPosition(1);
                         group.pushHistory(backToOne);
                         group.setPosition(backToOne);
+                        group.markNotPassedZero();
                     } else {
                         // 정상적으로 이전 경로로 이동
                         Position backPos = board.getPosition(group.peekHistory());
@@ -80,11 +72,8 @@ public class GroupMovement {
                     }
                 } else {
                     // 빽도가 아니면 → 완주로 처리
-                    for (Unit unit : group.getUnitGroup()) {
-                        unit.setStatus(Unit.Status.END);
-                    }
-                    groupManager.getGroup().remove(group);
-                    System.out.println("[완주] 유닛이 0을 통과한 후 다시 이동하여 종료됩니다.");
+                    group.markPassedZero();
+                    //System.out.println("[완주] 유닛이 0을 통과한 후 다시 이동하여 종료됩니다.");
                 }
                 return;
             }
@@ -101,22 +90,19 @@ public class GroupMovement {
                 Position backPos = board.getPosition(group.peekHistory());
                 group.setPosition(backPos);
             }
+            if(group.getCurrentPosition().getIndex() == 0){
+                group.markPassedZero();
+            }
         }
 
         group.printHistoryStack();
 
-        // 0번 통과 여부 확인 및 플래그 ON
-        if (group.getCurrentPosition().getIndex() == 0 && !group.hasPassedZero()) {
-            group.markPassedZero();
-            System.out.println("[디버깅] 0번을 통과함. passedZero 플래그 ON");
-        }
-
         // 완주 조건 확인
         if (group.hasPassedZero() && group.getCurrentPosition().getIndex() != 0) {
-            for (Unit unit : group.getUnitGroup()) {
+            /*for (Unit unit : group.getUnitGroup()) {
                 unit.setStatus(Unit.Status.END);
             }
-            groupManager.getGroup().remove(group);
+            groupManager.getGroup().remove(group);*/
             System.out.println("[완주] 유닛이 한 바퀴를 돌아 도착하였습니다.");
         }
         group.printHistoryStack();
@@ -132,6 +118,9 @@ public class GroupMovement {
         for (int i = 0; i < distance; i++) {
             current = current.getNext();
             group.pushHistory(current);
+            if(current.getIndex() == 0){
+                group.markPassedZero();
+            }
         }
 
         for (Unit unit : group.getUnitGroup()) {
@@ -153,39 +142,36 @@ public class GroupMovement {
     private void moveCenterToStart(GroupUnit group, int distance) {
         Position p = group.getCurrentPosition();
         int remainDistance = distance;
-
         while(p.getIndex() != 0 && remainDistance > 0) {
             p = p.getAltNext();
             group.pushHistory(p);
             remainDistance--;
+            if(p.getIndex() == 0) group.markPassedZero();
         }
-
         group.setPosition(p);
+        if(remainDistance > 0) moveAndRecordHistory(group, group.getCurrentPosition(), distance);
     }
 
     private void moveInnerPath(GroupUnit group, List<Position> myPath, int distance) {
         Position p = group.getCurrentPosition();
         int currentPathIdx = myPath.indexOf(p);
         int remainToPathEnd = myPath.size() - currentPathIdx - 1;
-
         if(remainToPathEnd > distance) {
 
             for(int i=1;i<=distance;i++) {
                 group.pushHistory(myPath.get(currentPathIdx + i));
             }
-
             group.setPosition(myPath.get(currentPathIdx + distance));
         } else {
             int normalDistance = distance - remainToPathEnd;
             group.releasePath();
 
-            for(int i=1;i<remainToPathEnd;i++) {
+            for(int i=1;i<=remainToPathEnd;i++) {
                 group.pushHistory(myPath.get(currentPathIdx + i));
             }
-
+            if(group.getCurrentPosition().getIndex() == 0) group.markPassedZero();
             group.setPosition(myPath.get(myPath.size() - 1));
             moveNormal(group, normalDistance);
         }
-
     }
 }
