@@ -5,9 +5,6 @@ import java.util.List;
 import model.GroupUnit;
 import model.Player;
 import model.Unit;
-import model.board.Board;
-import model.board.Path;
-import model.board.Position;
 
 public class UnitManager {
     private List<GroupUnit> groupList;
@@ -24,6 +21,7 @@ public class UnitManager {
         return group;
     }
 
+    /*
     public void moveGroup(GroupUnit group, int distance) {
         if (group == null) return;
 
@@ -203,5 +201,7 @@ public class UnitManager {
         }
         groupList.remove(group);
     }
+
+     */
 
 }
