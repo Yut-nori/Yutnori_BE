@@ -48,7 +48,6 @@ public class GroupMovement {
         } else {
             // 뒤로 한 칸 (빽도)
             if (group.isHistoryEmpty()) {
-                //System.out.println("출발한 유닛이 없어 [빽도]를 진행할 수 없습니다. 넘어갑니다.");
                 return;
             }
             if (group.getCurrentPosition().getIndex() == 0 && group.getUnitGroup().get(0).getStatus() == Unit.Status.ON) {
@@ -73,7 +72,6 @@ public class GroupMovement {
                 } else {
                     // 빽도가 아니면 → 완주로 처리
                     group.markPassedZero();
-                    //System.out.println("[완주] 유닛이 0을 통과한 후 다시 이동하여 종료됩니다.");
                 }
                 return;
             }
@@ -93,17 +91,6 @@ public class GroupMovement {
             if(group.getCurrentPosition().getIndex() == 0){
                 group.markPassedZero();
             }
-        }
-
-        group.printHistoryStack();
-
-        // 완주 조건 확인
-        if (group.hasPassedZero() && group.getCurrentPosition().getIndex() != 0) {
-            /*for (Unit unit : group.getUnitGroup()) {
-                unit.setStatus(Unit.Status.END);
-            }
-            groupManager.getGroup().remove(group);*/
-            System.out.println("[완주] 유닛이 한 바퀴를 돌아 도착하였습니다.");
         }
         group.printHistoryStack();
     }
@@ -128,14 +115,6 @@ public class GroupMovement {
                 unit.setStatus(Unit.Status.ON);
             }
         }
-        /*
-        System.out.println("[디버깅] 현재 그룹의 유닛 상태:");
-        for (Unit unit : group.getUnitGroup()) {
-            System.out.println(" - 유닛 상태: " + unit.getStatus() + ", 위치: " + unit.getCurrentPosition().getIndex());
-        }
-
-         */
-
         group.setPosition(current);
     }
 
