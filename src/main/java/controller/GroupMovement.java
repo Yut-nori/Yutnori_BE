@@ -136,7 +136,6 @@ public class GroupMovement {
         int currentPathIdx = myPath.indexOf(p);
         int remainToPathEnd = myPath.size() - currentPathIdx - 1;
         if(remainToPathEnd > distance) {
-
             for(int i=1;i<=distance;i++) {
                 group.pushHistory(myPath.get(currentPathIdx + i));
             }
@@ -147,8 +146,8 @@ public class GroupMovement {
 
             for(int i=1;i<=remainToPathEnd;i++) {
                 group.pushHistory(myPath.get(currentPathIdx + i));
+                if(myPath.get(currentPathIdx+i).getIndex() == 0) group.markPassedZero();
             }
-            if(group.getCurrentPosition().getIndex() == 0) group.markPassedZero();
             group.setPosition(myPath.get(myPath.size() - 1));
             moveNormal(group, normalDistance);
         }

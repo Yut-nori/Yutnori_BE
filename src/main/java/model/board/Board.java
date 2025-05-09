@@ -67,7 +67,7 @@ public class Board {
         end.setNext(start);
         start.setBack(end);
 
-        // 디버깅 출력: 외부 연결 상태 확인
+        /* 디버깅 출력: 외부 연결 상태 확인
         System.out.println("===== 외부 경로 연결 디버깅 =====");
         for (int i = 0; i <= lastOuterPosNum; i++) {
             Position current = positionArr[i];
@@ -77,7 +77,7 @@ public class Board {
                     current.getBack() != null ? current.getBack().getIndex() : -1
             );
         }
-        System.out.println("================================");
+        System.out.println("================================"); */
 
         // Center 생성 및 등록
         centerPos = new Position(positionNum - 1);
@@ -104,7 +104,6 @@ public class Board {
             int innerLastPosIdx = innerBaseIndex + innerPositionNum * (i + 1) - 1;
 
             Position innerStartPos = positionArr[innerStartPosIdx];
-            Position innerLastPos = positionArr[innerLastPosIdx];
 
             List<Position> eachInnerPath = new ArrayList<>();
 
@@ -123,7 +122,6 @@ public class Board {
                 // 시작 꼭짓점 -> 중심점까지 innerPath 등록
                 for (int j = innerStartPosIdx; j < innerLastPosIdx; j++) {
                     Position nextPos = positionArr[j + 1];
-                    //path.addPosition(nextPos);
                     eachInnerPath.add(nextPos);
                 }
                 eachInnerPath.add(centerPos);
@@ -168,6 +166,7 @@ public class Board {
         tmp.setAltNext(positionArr[0]);
         positionArr[0].setAltBack(tmp);
 
+        /* center에서 altNext의 경로 디버깅
         System.out.println("===== center → altNext 경로 디버깅 =====");
         Position p = centerPos;
         while (p != null) {
@@ -175,7 +174,7 @@ public class Board {
             if (p.getIndex() == 0) break;
             p = p.getAltNext();
         }
-        System.out.println("=======================================");
+        System.out.println("======================================="); */
     }
 
 
