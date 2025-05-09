@@ -15,7 +15,7 @@ public class Main {
 
         int[][] eachTestResult = new int[playerCount][];
 
-        eachTestResult[0] = new int[]{4, 4, 4, 3, 4, 4};
+        eachTestResult[0] = new int[]{-1, 1, -1, -1, -1, 1};
         eachTestResult[1] = new int[]{10,1,3,3,-1,5,1,2,3,4,5};
 
         // 실제 확률 기반 플레이 실행
