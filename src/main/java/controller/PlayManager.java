@@ -16,29 +16,37 @@ public class PlayManager {
     private int playerUnitNum;
     private Board gameBoard;
 
-
-    private BoardManager boardManager;
-    private GroupManager groupManager;
     /* TurnManger와 MoveManager 인터페이스화*/
-    private  ITurnManager turnManager;
-    private  IMoveManager moveManager;
-    private IView iView;
+    protected  BoardManager boardManager;
+    protected  GroupManager groupManager;
+    protected  ITurnManager turnManager;
+    protected  IMoveManager moveManager;
+    protected  IView iView;
 
-    public PlayManager(int numPlayer, int boardEdgeNum, String[] playerNameList, int playerUnitNum, IView view) {
+    public PlayManager(
+            int numPlayer,
+            int boardEdgeNum,
+            String[] playerNameList,
+            int playerUnitNum,
+            IView view,
+            BoardManager boardManager,
+            GroupManager groupManager,
+            IMoveManager moveManager,
+            ITurnManager turnManager
+    ) {
         this.numPlayer = numPlayer;
         this.currentPlayer = 0;
         this.playerList = new ArrayList<>();
         this.playerUnitNum = playerUnitNum;
-        this.groupManager = new GroupManager();
+        this.groupManager = groupManager;
         this.iView = view;
+        this.boardManager = boardManager;
+        this.moveManager = moveManager;
+        this.turnManager = turnManager;
         BoardManager.createBoard(boardEdgeNum);
         gameBoard = BoardManager.getBoard();
         createPlayer(playerNameList, playerUnitNum);
         createGroupManager(this.playerList);
-        this.moveManager = new MoveManager(this.groupManager, this.iView);
-        this.turnManager = new TurnManager(numPlayer, this.groupManager, this.moveManager, this.iView);
-
-
     }
 
     //유저 생성
@@ -78,5 +86,21 @@ public class PlayManager {
             return;
         }
         this.currentPlayer = turnManager.getNextPlayer();
+    }
+
+    public List<Player> getPlayerList() {
+        return playerList;
+    }
+
+    public int getCurrentPlayerIndex() {
+        return currentPlayer;
+    }
+
+    public GroupManager getGroupManager() {
+        return groupManager;
+    }
+
+    public IMoveManager getMoveManager() {
+        return moveManager;
     }
 }
