@@ -19,7 +19,7 @@ TurnManager implements ITurnManager {
     private GroupManager groupManager;
     private IMoveManager moveManager;
     private IView view;
-
+    protected List<Integer> throwResult = new ArrayList<>();
 
     public TurnManager(int numPlayer, GroupManager groupManager, IMoveManager moveManager, IView view) {
         this.numPlayer = numPlayer;
@@ -34,7 +34,6 @@ TurnManager implements ITurnManager {
     //유닛 이동은 groupManager에서 실행
     @Override
     public void doPlayerTurn(Player player, boolean isTest, int[][] testResult) {
-        List<Integer> throwResult = new ArrayList<>();
         if(!isTest) throwResult.addAll(player.throwYut());
         else {
             int testResultIdx = player.getPlayerID();
@@ -57,6 +56,7 @@ TurnManager implements ITurnManager {
             }
         }
         //다음 플레이어 설정
+        throwResult.clear();
         setNextPlayer();
     }
 
@@ -77,5 +77,9 @@ TurnManager implements ITurnManager {
             if(unit.getStatus() != Unit.Status.END){ return false;}
         }
         return true;
+    }
+
+    public List<Integer> getthrowResult(){
+        return throwResult;
     }
 }
