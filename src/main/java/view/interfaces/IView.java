@@ -10,7 +10,7 @@ public interface IView {
     // 게임 시작 시, 환영 메시지 출력
     public void displayWelcome(int numPlayer, int playerUnitNum, int boardEdgeNum);
 
-        // 현재 플레이어와 그룹의 상태 출력
+    // 현재 플레이어와 그룹의 상태 출력
     void displayBoardStatus(Player player, List<GroupUnit> groups);
 
     // 이동할 그룹 선택 받기
@@ -22,7 +22,7 @@ public interface IView {
     int getMoveSelection();
 
     // 이동 결과에 대한 메시지 출력
-    void displayMoveResult(int result);
+    void displayMoveResult(String result);
 
     // 게임 승리 메시지 출력
     void displayVictory(Player player);
