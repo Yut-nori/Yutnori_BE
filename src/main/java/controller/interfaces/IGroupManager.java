@@ -1,11 +1,9 @@
 package controller.interfaces;
-
+import java.util.List;
 import model.GroupUnit;
 import model.Player;
 import model.Unit;
 import model.board.Position;
-
-import java.util.List;
 
 public interface IGroupManager {
     GroupUnit createGroup(Player player, Unit unit);
